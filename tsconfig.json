@@ -11,11 +11,17 @@
     "outDir": "./dist",
     "baseUrl": "./",
     "incremental": true,
+    "strict": false,
     "skipLibCheck": true,
     "strictNullChecks": false,
     "noImplicitAny": false,
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
-    "noFallthroughCasesInSwitch": false
+    "noFallthroughCasesInSwitch": false,
+    "typeRoots": [
+      "node_modules/@types",
+      "src/shared/types",
+      "node_modules/@nestjs/typeorm/index.d.ts"
+    ]
   }
 }
