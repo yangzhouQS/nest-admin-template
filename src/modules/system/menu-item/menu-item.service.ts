@@ -4,7 +4,7 @@ import { UpdateMenuItemDto } from './dto/update-menu-item.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { SMenuItemEntity } from '../../../entities/system-modules';
 import { Repository } from 'typeorm';
-import { TypeOrmCurdService } from '../../../shared/crud/services/type-orm-curd.service';
+import { TypeOrmCurdService } from '../../../shared/orm-crud';
 
 @Injectable()
 export class MenuItemService extends TypeOrmCurdService<SMenuItemEntity> {
