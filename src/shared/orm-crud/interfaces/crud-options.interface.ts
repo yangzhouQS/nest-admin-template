@@ -9,6 +9,17 @@ export interface CrudRequestOptions {
   params?: ObjectLiteral;
 }
 
+export interface AuthOptions {
+  property?: string;
+  /** Get options for the `classToPlain` function (response) */
+  classTransformOptions?: (req: any) => ()=>{};
+  /** Get `groups` value for the `classToPlain` function options (response) */
+  groups?: (req: any) => string[];
+  filter?: (req: any) =>  void;
+  or?: (req: any) =>  void;
+  persist?: (req: any) => ObjectLiteral;
+}
+
 export interface CrudOptions {
   model: ModelOptions;
   dto?: any;
@@ -18,4 +29,6 @@ export interface CrudOptions {
   routesFactory?: typeof CrudRoutesFactory;
   params?: CrudRoutesFactory;
   validation?: ValidationPipeOptions | false;
+
+  auth?:AuthOptions
 }

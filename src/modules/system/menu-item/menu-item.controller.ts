@@ -10,7 +10,7 @@ import {
 import { MenuItemService } from './menu-item.service';
 import { CreateMenuItemDto } from './dto/create-menu-item.dto';
 import { UpdateMenuItemDto } from './dto/update-menu-item.dto';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiTags } from "@nestjs/swagger";
 import { OrmCrud } from '../../../shared/orm-crud';
 import { OrmCrudController } from '../../../shared/orm-crud/interfaces/orm-crud-controller.interface';
 import { SMenuItemEntity } from '../../../entities/system-modules';
@@ -47,10 +47,16 @@ export class MenuItemController implements OrmCrudController<SMenuItemEntity> {
     public readonly ormService: MenuItemService,
     private readonly menuItemService: MenuItemService,
   ) {
-    console.log('MenuItemController', this);
+    // console.log('MenuItemController', this);
   }
 
-  @Post()
+  @ApiOperation({ summary: '创建菜单' })
+  @Post("/create-menu")
+  create(@Body() createMenuItemDto: CreateMenuItemDto) {
+    return this.menuItemService.create(createMenuItemDto);
+  }
+
+ /* @Post()
   create(@Body() createMenuItemDto: CreateMenuItemDto) {
     return this.menuItemService.create(createMenuItemDto);
   }
@@ -77,5 +83,5 @@ export class MenuItemController implements OrmCrudController<SMenuItemEntity> {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.menuItemService.remove(+id);
-  }
+  }*/
 }
