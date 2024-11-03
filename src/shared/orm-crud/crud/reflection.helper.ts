@@ -115,8 +115,20 @@ export class R {
     R.set(CRUD_OPTIONS_METADATA, options, target);
   }
 
+  /**
+   * controller 路由设置 请求方法和请求路径
+   * @param {BaseRoute} route
+   * @param func
+   */
   static setRoute(route: BaseRoute, func: unknown) {
+    /**
+     * 设置请求路径
+     */
     R.set(PATH_METADATA, route.path, func);
+
+    /**
+     * 设置请求方法
+     */
     R.set(METHOD_METADATA, route.method, func);
   }
 

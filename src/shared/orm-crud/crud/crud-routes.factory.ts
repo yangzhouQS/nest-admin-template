@@ -64,7 +64,7 @@ export class CrudRoutesFactory {
     /**
      * 覆盖路由
      */
-    this.overrideRoutes(routesSchema);
+    // this.overrideRoutes(routesSchema);
 
     /**
      * 启用路由
@@ -263,6 +263,11 @@ export class CrudRoutesFactory {
     });
   }
 
+  /**
+   * 覆盖路由
+   * @param {BaseRoute[]} routesSchema
+   * @protected
+   */
   protected overrideRoutes(routesSchema: BaseRoute[]) {
     Object.getOwnPropertyNames(this.targetProto).forEach((name) => {
       const override = R.getOverrideRoute(this.targetProto[name]);
@@ -293,6 +298,11 @@ export class CrudRoutesFactory {
     });
   }
 
+  /**
+   * 启用路由,模拟nest请求方法装饰器设置请求方法和请求路径
+   * @param {BaseRoute[]} routesSchema
+   * @protected
+   */
   protected enableRoutes(routesSchema: BaseRoute[]) {
     routesSchema.forEach((route) => {
       if (!route.override && route.enable) {
@@ -398,18 +408,46 @@ export class CrudRoutesFactory {
    * @private
    */
   private setBaseRouteMeta(name: BaseRouteName) {
+
+    /**
+     * 路由参数设置
+     */
     this.setRouteArgs(name);
+
+    /**
+     * 路由参数类型设置
+     */
     this.setRouteArgsTypes(name);
+
+    /**
+     * 设置拦截器
+     */
     this.setInterceptors(name);
+
+    /**
+     * 设置action 操作
+     */
     this.setAction(name);
+
+    /**
+     * 设置单个接口swagger元数据标题
+     */
     this.setSwaggerOperation(name);
     this.setSwaggerPathParams(name);
     this.setSwaggerQueryParams(name);
     this.setSwaggerResponseOk(name);
+    /**
+     * 设置装饰器,swagger元数据可以覆盖
+     */
     // set decorators after Swagger so metadata can be overwritten
     this.setDecorators(name);
   }
 
+  /**
+   * 设置参数
+   * @param {BaseRouteName} name
+   * @private
+   */
   private setRouteArgs(name: BaseRouteName) {
     const rest = {};
     R.setRouteArgs({ ...R.setParsedRequestArg(0), ...rest }, this.target, name);
