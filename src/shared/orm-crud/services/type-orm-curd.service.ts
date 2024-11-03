@@ -1,10 +1,12 @@
-import { OrmCrudServiceAbstract } from './orm-crud-service.abstract';
-import { CrudRequest } from '../interfaces/crud-request.interface';
-import { DataSourceOptions, Repository, SelectQueryBuilder } from 'typeorm';
-import { ClassType, ObjectLiteral } from '../../types';
-import { filter, map } from 'lodash';
-import { ParsedRequestParams } from '../crud-request';
-import { CrudRequestOptions } from '../interfaces/crud-options.interface';
+import { OrmCrudServiceAbstract } from "./orm-crud-service.abstract";
+import { CrudRequest } from "../interfaces/crud-request.interface";
+import { DataSourceOptions, Repository, SelectQueryBuilder } from "typeorm";
+import { ClassType, ObjectLiteral } from "../../types";
+import { filter, map } from "lodash";
+import { ParsedRequestParams } from "../crud-request";
+import { CrudRequestOptions } from "../interfaces/crud-options.interface";
+import { GetManyDefaultResponse } from "../interfaces/get-many-default-response.interface";
+import { CreateManyDto } from "../interfaces/orm-crud-controller.interface";
 
 interface IAllowedRelation {
   alias?: string;
@@ -22,7 +24,7 @@ export class TypeOrmCurdService<T> extends OrmCrudServiceAbstract<T> {
    * @type {DataSourceOptions["type"]}
    * @protected
    */
-  protected dbName: DataSourceOptions['type'];
+  protected dbName: DataSourceOptions["type"];
 
   /**
    * 实体列名称
@@ -38,21 +40,22 @@ export class TypeOrmCurdService<T> extends OrmCrudServiceAbstract<T> {
   protected entityColumnsHash: ObjectLiteral = {};
 
   protected entityRelationsHash: Map<string, IAllowedRelation> = new Map();
+
   constructor(protected repo: Repository<T>) {
     super();
     this.dbName = this.repo.metadata.connection.options.type;
     this.onInitMapEntityColumns();
   }
 
-  public get findOne(): Repository<T>['findOne'] {
+  public get findOne(): Repository<T>["findOne"] {
     return this.repo.findOne.bind(this.repo);
   }
 
-  public get find(): Repository<T>['find'] {
+  public get find(): Repository<T>["find"] {
     return this.repo.find.bind(this.repo);
   }
 
-  public get count(): Repository<T>['count'] {
+  public get count(): Repository<T>["count"] {
     return this.repo.count.bind(this.repo);
   }
 
@@ -77,6 +80,58 @@ export class TypeOrmCurdService<T> extends OrmCrudServiceAbstract<T> {
     return this.getOneOrFail(req);
   }
 
+  public async getMany(/*req: CrudRequest*/): Promise<GetManyDefaultResponse<T> | T[]> {
+    // const { parsed, options } = req;
+    // const builder = await this.createBuilder(parsed, options);
+    // return this.doGetMany(builder, parsed, options);
+    return ["ok getMany"] as any[];
+  }
+
+  /**
+   * Create one
+   * @param req
+   * @param dto
+   */
+  public async createOne(req: CrudRequest, dto: T | Partial<T>): Promise<T> {
+    return "ok createOne" as any;
+  }
+
+  /**
+   * Create many
+   * @param req
+   * @param dto
+   */
+  public async createMany(req: CrudRequest, dto: CreateManyDto<T | Partial<T>>): Promise<T[]> {
+    return ["ok createMany"] as any[];
+  }
+
+
+  /**
+   * depends on paging call `SelectQueryBuilder#getMany` or `SelectQueryBuilder#getManyAndCount`
+   * helpful for overriding `TypeOrmCrudService#getMany`
+   * @see getMany
+   * @see SelectQueryBuilder#getMany
+   * @see SelectQueryBuilder#getManyAndCount
+   * @param builder
+   * @param query
+   * @param options
+   */
+  protected async doGetMany(
+    builder: SelectQueryBuilder<T>,
+    query: ParsedRequestParams,
+    options: CrudRequestOptions
+  ): Promise<GetManyDefaultResponse<T> | T[]> {
+    /*if (this.decidePagination(query, options)) {
+      const [data, total] = await builder.getManyAndCount();
+      const limit = builder.expressionMap.take;
+      const offset = builder.expressionMap.skip;
+
+      return this.createPageInfo(data, total, limit || total, offset || 0);
+    }*/
+
+    return builder.getMany();
+  }
+
   /**
    * 初始化实体列 映射配置
    * @protected
@@ -93,7 +148,7 @@ export class TypeOrmCurdService<T> extends OrmCrudServiceAbstract<T> {
     });
 
     this.entityPrimaryColumns = filter(columns, (prop) => prop.isPrimary).map(
-      (prop) => prop.propertyName,
+      (prop) => prop.propertyName
     );
 
     this.entityHasDeleteColumn =
@@ -103,7 +158,7 @@ export class TypeOrmCurdService<T> extends OrmCrudServiceAbstract<T> {
   public async getOneOrFail(
     req: CrudRequest,
     shallow = false,
-    withDeleted = false,
+    withDeleted = false
   ) {
     const { parsed, options } = req;
     const builder = this.repo.createQueryBuilder(this.alias);
@@ -130,8 +185,10 @@ export class TypeOrmCurdService<T> extends OrmCrudServiceAbstract<T> {
     parsed: ParsedRequestParams,
     options: CrudRequestOptions,
     many = true,
-    withDeleted = false,
+    withDeleted = false
   ): Promise<any> {
+    const builder = this.repo.createQueryBuilder(this.alias);
+
     return {};
   }
 }

@@ -8,13 +8,6 @@ import { DECORATORS } from "@nestjs/swagger/dist/constants";
 
 import swagger from "@nestjs/swagger";
 
-/*export const swagger = safeRequire('@nestjs/swagger', () =>
-  require('@nestjs/swagger'),
-);*/
-/*export const swaggerConst = safeRequire('@nestjs/swagger/dist/constants', () =>
-  require('@nestjs/swagger/dist/constants'),
-);*/
-import {} from "@nestjs/swagger";
 import { ParamsOptions } from "../crud-request";
 import { CrudOptions } from "../interfaces/crud-options.interface";
 import { isString } from "lodash";
@@ -26,11 +19,11 @@ export const swaggerPkgJson = safeRequire("@nestjs/swagger/package.json", () =>
 export class CrudSwaggerHelper {
   static operationsMap(modelName: string): { [key in BaseRouteName]: string } {
     return {
-      getManyBase: `Retrieve multiple ${pluralize(modelName)}`,
-      getOneBase: `Retrieve a single ${modelName}`,
-      createManyBase: `Create multiple ${pluralize(modelName)}`,
-      createOneBase: `Create a single ${modelName}`,
-      updateOneBase: `Update a single ${modelName}`,
+      getManyBase: `查询多条 Retrieve multiple ${pluralize(modelName)}`,
+      getOneBase: `根据主键id查询单条数据 Retrieve a single ${modelName}`,
+      createManyBase: `创建多条数据 Create multiple ${pluralize(modelName)}`,
+      createOneBase: `创建单条数据 Create a single ${modelName}`,
+      updateOneBase: `更新单条 Update a single ${modelName}`,
       replaceOneBase: `Replace a single ${modelName}`,
       deleteOneBase: `Delete a single ${modelName}`,
       recoverOneBase: `Recover one ${modelName}`
@@ -67,6 +60,17 @@ export class CrudSwaggerHelper {
   static getExtraModels(target: unknown): any[] {
     /* istanbul ignore next */
     return R.get(DECORATORS.API_EXTRA_MODELS, target) || []
+  }
+
+  /**
+   * 创建路由分组
+   * @param metadata
+   * @param func
+   */
+  static setControllerTags(metadata: unknown, func: any): void {
+    if (DECORATORS){
+      R.set(DECORATORS.API_TAGS, metadata, func);
+    }
   }
 
   static setExtraModels(swaggerModels: any): void {

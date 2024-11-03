@@ -5,19 +5,18 @@ import {
   Body,
   Patch,
   Param,
-  Delete,
-} from '@nestjs/common';
-import { MenuItemService } from './menu-item.service';
-import { CreateMenuItemDto } from './dto/create-menu-item.dto';
-import { UpdateMenuItemDto } from './dto/update-menu-item.dto';
+  Delete
+} from "@nestjs/common";
+import { MenuItemService } from "./menu-item.service";
+import { CreateMenuItemDto } from "./dto/create-menu-item.dto";
+import { UpdateMenuItemDto } from "./dto/update-menu-item.dto";
 import { ApiOperation, ApiTags } from "@nestjs/swagger";
-import { OrmCrud } from '../../../shared/orm-crud';
-import { OrmCrudController } from '../../../shared/orm-crud/interfaces/orm-crud-controller.interface';
-import { SMenuItemEntity } from '../../../entities/system-modules';
-import { CrudRequest } from '../../../shared/orm-crud/interfaces/crud-request.interface';
+import { OrmCrud } from "../../../shared/orm-crud";
+import { OrmCrudController } from "../../../shared/orm-crud/interfaces/orm-crud-controller.interface";
+import { SMenuItemEntity } from "../../../entities/system-modules";
 
-@ApiTags('system:menu菜单管理')
 @OrmCrud({
+  tags: ["system:menu菜单管理"],
   /*routes: {
     only: [],
     exclude: [],
@@ -36,52 +35,52 @@ import { CrudRequest } from '../../../shared/orm-crud/interfaces/crud-request.in
       decorators?: [],
     },
   },*/
-  validate: false,
-  model: SMenuItemEntity,
-  params: {},
-  query: {},
+  // validate: false,
+  // model: SMenuItemEntity,
+  // params: {},
+  // query: {}
 })
-@Controller('menu-item')
+@Controller("menu-item")
 export class MenuItemController implements OrmCrudController<SMenuItemEntity> {
   constructor(
     public readonly ormService: MenuItemService,
-    private readonly menuItemService: MenuItemService,
+    private readonly menuItemService: MenuItemService
   ) {
     // console.log('MenuItemController', this);
   }
 
-  @ApiOperation({ summary: '创建菜单' })
+  @ApiOperation({ summary: "创建菜单" })
   @Post("/create-menu")
   create(@Body() createMenuItemDto: CreateMenuItemDto) {
     return this.menuItemService.create(createMenuItemDto);
   }
 
- /* @Post()
-  create(@Body() createMenuItemDto: CreateMenuItemDto) {
-    return this.menuItemService.create(createMenuItemDto);
-  }
+  /* @Post()
+   create(@Body() createMenuItemDto: CreateMenuItemDto) {
+     return this.menuItemService.create(createMenuItemDto);
+   }
 
-  @Get()
-  findAll() {
-    return this.menuItemService.findAll();
-  }
+   @Get()
+   findAll() {
+     return this.menuItemService.findAll();
+   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    // return this.menuItemService.findOne(+id);
-    return this.menuItemService.getOne();
-  }
+   @Get(':id')
+   findOne(@Param('id') id: string) {
+     // return this.menuItemService.findOne(+id);
+     return this.menuItemService.getOne();
+   }
 
-  @Patch(':id')
-  update(
-    @Param('id') id: string,
-    @Body() updateMenuItemDto: UpdateMenuItemDto,
-  ) {
-    return this.menuItemService.update(+id, updateMenuItemDto);
-  }
+   @Patch(':id')
+   update(
+     @Param('id') id: string,
+     @Body() updateMenuItemDto: UpdateMenuItemDto,
+   ) {
+     return this.menuItemService.update(+id, updateMenuItemDto);
+   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.menuItemService.remove(+id);
-  }*/
+   @Delete(':id')
+   remove(@Param('id') id: string) {
+     return this.menuItemService.remove(+id);
+   }*/
 }

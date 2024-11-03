@@ -106,6 +106,11 @@ export class R {
     return R.createRouteArg(RouteParamtypes.BODY, index, pipes);
   }
 
+  /**
+   * 在控制器设置设置保存配置参数
+   * @param {CrudOptions} options
+   * @param target
+   */
   static setCrudOptions(options: CrudOptions, target: any) {
     R.set(CRUD_OPTIONS_METADATA, options, target);
   }

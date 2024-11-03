@@ -1,5 +1,7 @@
 import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { CrudRequest } from '../interfaces/crud-request.interface';
+import { GetManyDefaultResponse } from "../interfaces/get-many-default-response.interface";
+import { CreateManyDto } from "../interfaces/orm-crud-controller.interface";
 
 export abstract class OrmCrudServiceAbstract<T> {
   throwBadRequestException(msg?: unknown): BadRequestException {
@@ -29,5 +31,9 @@ export abstract class OrmCrudServiceAbstract<T> {
     };
   }
 
+
+  abstract getMany(req: CrudRequest): Promise<GetManyDefaultResponse<T> | T[]>;
   abstract getOne(req: CrudRequest): Promise<T>;
+  abstract createOne(req: CrudRequest, dto: T | Partial<T>): Promise<T>;
+  abstract createMany(req: CrudRequest, dto: CreateManyDto): Promise<T[]>;
 }

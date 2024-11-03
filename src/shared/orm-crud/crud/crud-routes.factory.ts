@@ -36,16 +36,49 @@ export class CrudRoutesFactory {
     return new CrudRoutesFactory(target, options);
   }
 
+  /**
+   * 路由配置初始化
+   * @private
+   */
   private initCrudRoute() {
     const routesSchema = this.getRoutesSchema();
-
+    /**
+     * 合并装饰器参数配置
+     */
     this.mergeOptions();
-    this.setResponseModels();
+
+    // 设置tags
+    this.setControllerTags();
+
+    /**
+     * 设置返回模型
+     */
+    // this.setResponseModels();
+
+    /**
+     * 创建路由,生成设置nest路由配置
+     */
     this.createRoutes(routesSchema);
 
 
+    /**
+     * 覆盖路由
+     */
     this.overrideRoutes(routesSchema);
+
+    /**
+     * 启用路由
+     */
     this.enableRoutes(routesSchema);
+  }
+
+  /**
+   * 创建路由tags分组
+   * @private
+   */
+  private setControllerTags() {
+    const tags = this.options.tags || [this.modelType];
+    CrudSwaggerHelper.setControllerTags(tags, this.target);
   }
 
   protected mergeOptions() {
@@ -63,12 +96,12 @@ export class CrudRoutesFactory {
     }*/
 
     // merge query config
-    this.options.query = isObjectFull(this.options.query) ? this.options.query : {} // { ...CrudConfigService.config.query, ...query };
+    this.options.query = isObjectFull(this.options.query) ? this.options.query : {}; // { ...CrudConfigService.config.query, ...query };
 
     // merge routes config
     const routes = isObjectFull(this.options.routes) ? this.options.routes : {};
     this.options.routes = deepmerge(CrudConfigService.config.routes, routes, {
-      arrayMerge: (a, b, c) => b,
+      arrayMerge: (a, b, c) => b
     });
 
     // set params
@@ -78,13 +111,13 @@ export class CrudRoutesFactory {
         ? CrudConfigService.config.params
         : {};*/
 
-    this.options.params = {} as any
+    this.options.params = {} as any;
     const hasPrimary = this.getPrimaryParams().length > 0;
     if (!hasPrimary) {
-      this.options.params['id'] = {
-        field: 'id',
-        type: 'number',
-        primary: true,
+      this.options.params["id"] = {
+        field: "id",
+        type: "number",
+        primary: true
       };
     }
 
@@ -123,7 +156,7 @@ export class CrudRoutesFactory {
     R.setCrudOptions(this.options, this.target);
   }
 
-  protected setResponseModels(){
+  protected setResponseModels() {
 
     const modelType = isFunction(this.modelType)
       ? this.modelType
@@ -153,12 +186,13 @@ export class CrudRoutesFactory {
   }
 
   protected get modelName(): string {
-    return get(this.options, "model.type.name", "");
+    return get(this.options, "model.name", "");
     // return this.options.model.type.name;
   }
 
   protected get modelType(): any {
-    return this.options.model.type;
+    return get(this.options, "model.type", "");
+    // return this.options.model.type;
   }
 
   protected get actionsMap(): { [key in BaseRouteName]: CrudActions } {
@@ -183,6 +217,22 @@ export class CrudRoutesFactory {
         enable: false,
         override: false,
         withParams: true
+      },
+      {
+        name: "getManyBase",
+        path: "/get-many",
+        method: RequestMethod.POST,
+        enable: false,
+        override: false,
+        withParams: false
+      },
+      {
+        name: "createOneBase",
+        path: "/create-one",
+        method: RequestMethod.POST,
+        enable: false,
+        override: false,
+        withParams: false
       }
     ];
   }
@@ -196,9 +246,12 @@ export class CrudRoutesFactory {
       this[route.name](route.name);
       route.enable = true;
 
+      console.log("route:", route);
+
       // set metadata
       this.setBaseRouteMeta(route.name);
 
+      // 设置查询主键的路径参数
       if (route.withParams && primaryParams.length > 0) {
         route.path =
           route.path !== "/"
@@ -249,7 +302,7 @@ export class CrudRoutesFactory {
   }
 
   protected overrideParsedBodyDecorator(override: BaseRouteName, name: string) {
-    const allowed = ['createManyBase', 'createOneBase', 'updateOneBase', 'replaceOneBase'] as BaseRouteName[];
+    const allowed = ["createManyBase", "createOneBase", "updateOneBase", "replaceOneBase"] as BaseRouteName[];
     const withBody = isIn(override, allowed);
     const parsedBody = R.getParsedBody(this.targetProto[name]);
 
@@ -264,15 +317,15 @@ export class CrudRoutesFactory {
           ...routeArgs,
           [key]: {
             ...baseBodyArg,
-            index: parsedBody.index,
-          },
+            index: parsedBody.index
+          }
         },
         this.target,
-        name,
+        name
       );
 
       /* istanbul ignore else */
-      if (isEqual(override, 'createManyBase')) {
+      if (isEqual(override, "createManyBase")) {
         const paramTypes = R.getRouteArgsTypes(this.targetProto, name);
         const metatype = paramTypes[parsedBody.index];
         const types = [String, Boolean, Number, Array, Object];
@@ -290,9 +343,16 @@ export class CrudRoutesFactory {
   }
 
   private getPrimaryParams(): string[] {
-    return [];
+    return objKeys(this.options.params).filter(
+      (param) => this.options.params[param] && this.options.params[param].primary
+    );
   }
 
+  /**
+   * 单条查询
+   * @param {BaseRouteName} name
+   * @protected
+   */
   protected getOneBase(name: BaseRouteName) {
     console.log("targetProto: ", this.targetProto);
     /**
@@ -301,12 +361,36 @@ export class CrudRoutesFactory {
      * @returns {any}
      */
     this.targetProto[name] = function getOneBase(req: CrudRequest) {
-      return 'hello getOneBase'
+      console.log("req:", req);
+      return "hello getOneBase";
       return this.ormService.getOne(req);
     };
 
     console.log("targetProto: ", this.targetProto);
   }
+
+  /**
+   * 多条查询
+   * @param {BaseRouteName} name
+   * @protected
+   */
+  protected getManyBase(name: BaseRouteName) {
+    this.targetProto[name] = function getManyBase(req: CrudRequest) {
+      return this.ormService.getMany(req);
+    };
+  }
+
+  /**
+   * 创建单条
+   * @param {BaseRouteName} name
+   * @protected
+   */
+  protected createOneBase(name: BaseRouteName) {
+    this.targetProto[name] = function createOneBase(req: CrudRequest, dto: any) {
+      return this.ormService.createOne(req, dto);
+    };
+  }
+
 
   /**
    * 设置路由元数据,swagger初始化
