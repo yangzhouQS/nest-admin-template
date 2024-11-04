@@ -5,18 +5,22 @@ import {
   Body,
   Patch,
   Param,
-  Delete
-} from "@nestjs/common";
-import { MenuItemService } from "./menu-item.service";
-import { CreateMenuItemDto } from "./dto/create-menu-item.dto";
-import { UpdateMenuItemDto } from "./dto/update-menu-item.dto";
-import { ApiOperation, ApiTags } from "@nestjs/swagger";
-import { OrmCrud } from "../../../shared/orm-crud";
-import { OrmCrudController } from "../../../shared/orm-crud/interfaces/orm-crud-controller.interface";
-import { SMenuItemEntity } from "../../../entities/system-modules";
+  Delete,
+  Query,
+  DefaultValuePipe,
+  ParseIntPipe,
+} from '@nestjs/common';
+import { MenuItemService } from './menu-item.service';
+import { CreateMenuItemDto } from './dto/create-menu-item.dto';
+import { UpdateMenuItemDto } from './dto/update-menu-item.dto';
+import { ApiOperation, ApiOkResponse } from '@nestjs/swagger';
+import { OrmCrud } from '../../../shared/orm-crud';
+import { OrmCrudController } from '../../../shared/orm-crud/interfaces/orm-crud-controller.interface';
+import { SMenuItemEntity } from '../../../entities/system-modules';
+import { Pagination } from '../../../shared/typeorm-paginate';
 
 @OrmCrud({
-  tags: ["system:menu菜单管理"],
+  tags: ['system:menu菜单管理'],
   /*routes: {
     only: [],
     exclude: [],
@@ -40,47 +44,46 @@ import { SMenuItemEntity } from "../../../entities/system-modules";
   // params: {},
   // query: {}
 })
-@Controller("menu-item")
+@Controller('menu-item')
 export class MenuItemController implements OrmCrudController<SMenuItemEntity> {
   constructor(
     public readonly ormService: MenuItemService,
-    private readonly menuItemService: MenuItemService
+    private readonly menuItemService: MenuItemService,
   ) {
     // console.log('MenuItemController', this);
   }
 
-  @ApiOperation({ summary: "创建菜单" })
-  @Post("/create-menu")
+  @ApiOperation({ summary: '创建菜单' })
+  @Post('/create-menu')
   create(@Body() createMenuItemDto: CreateMenuItemDto) {
     return this.menuItemService.create(createMenuItemDto);
   }
 
-  /* @Post()
-   create(@Body() createMenuItemDto: CreateMenuItemDto) {
-     return this.menuItemService.create(createMenuItemDto);
-   }
-
-   @Get()
-   findAll() {
-     return this.menuItemService.findAll();
-   }
-
-   @Get(':id')
-   findOne(@Param('id') id: string) {
-     // return this.menuItemService.findOne(+id);
-     return this.menuItemService.getOne();
-   }
-
-   @Patch(':id')
-   update(
-     @Param('id') id: string,
-     @Body() updateMenuItemDto: UpdateMenuItemDto,
-   ) {
-     return this.menuItemService.update(+id, updateMenuItemDto);
-   }
-
-   @Delete(':id')
-   remove(@Param('id') id: string) {
-     return this.menuItemService.remove(+id);
-   }*/
+  @ApiOperation({ summary: '分页查询' })
+  @ApiOkResponse({
+    description: '分页查询返回数据',
+    // type: Pagination<SMenuItemEntity>,
+    schema: {
+      type: 'object',
+      properties: {
+        data: {
+          type: 'array',
+          items: { $ref: '#/components/schemas/SMenuItemEntity' },
+        },
+        total: { type: 'number' },
+      },
+    },
+  })
+  @Post('/page')
+  async page(
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number = 1,
+    @Query('limt', new DefaultValuePipe(10), ParseIntPipe) limit: number = 10,
+  ) {
+    limit = limit > 100 ? 100 : limit;
+    return this.menuItemService.page({
+      page,
+      limit,
+      // route: 'http://cat.com/menus',
+    });
+  }
 }

@@ -1,10 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { CreateMenuItemDto } from './dto/create-menu-item.dto';
-import { UpdateMenuItemDto } from './dto/update-menu-item.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { SMenuItemEntity } from '../../../entities/system-modules';
 import { Repository } from 'typeorm';
 import { TypeOrmCurdService } from '../../../shared/orm-crud';
+import {
+  IPaginationOptions,
+  paginate,
+  Pagination,
+} from '../../../shared/typeorm-paginate';
 
 @Injectable()
 export class MenuItemService extends TypeOrmCurdService<SMenuItemEntity> {
@@ -14,23 +18,14 @@ export class MenuItemService extends TypeOrmCurdService<SMenuItemEntity> {
   ) {
     super(menuItemRepository);
   }
+
   create(createMenuItemDto: CreateMenuItemDto) {
     return 'This action adds a new menuItem';
   }
 
-  findAll() {
-    return `This action returns all menuItem`;
-  }
-
-  /*findOne(id: number) {
-    return `This action returns a #${id} menuItem`;
-  }*/
-
-  update(id: number, updateMenuItemDto: UpdateMenuItemDto) {
-    return `This action updates a #${id} menuItem`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} menuItem`;
+  page(options: IPaginationOptions): Promise<Pagination<SMenuItemEntity>> {
+    const builder = this.menuItemRepository.createQueryBuilder('c');
+    builder.orderBy('c.id', 'DESC');
+    return paginate<SMenuItemEntity>(builder, options);
   }
 }
