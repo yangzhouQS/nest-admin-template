@@ -13,7 +13,7 @@ import {
 import { MenuItemService } from './menu-item.service';
 import { CreateMenuItemDto } from './dto/create-menu-item.dto';
 import { UpdateMenuItemDto } from './dto/update-menu-item.dto';
-import { ApiOperation, ApiOkResponse } from '@nestjs/swagger';
+import { ApiOperation, ApiOkResponse, ApiQuery } from '@nestjs/swagger';
 import { OrmCrud } from '../../../shared/orm-crud';
 import { OrmCrudController } from '../../../shared/orm-crud/interfaces/orm-crud-controller.interface';
 import { SMenuItemEntity } from '../../../entities/system-modules';
@@ -74,10 +74,32 @@ export class MenuItemController implements OrmCrudController<SMenuItemEntity> {
       },
     },
   })
+  @ApiQuery({
+    name: 'page',
+    required: false,
+    type: Number,
+    description: '页码',
+    example: 1,
+    schema: {
+      type: 'number',
+      default: 1,
+    },
+  })
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+    type: Number,
+    description: '页大小',
+    example: 10,
+    schema: {
+      type: 'number',
+      default: 10,
+    },
+  })
   @Post('/page')
   async page(
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number = 1,
-    @Query('limt', new DefaultValuePipe(10), ParseIntPipe) limit: number = 10,
+    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number = 10,
   ) {
     limit = limit > 100 ? 100 : limit;
     return this.menuItemService.page({
