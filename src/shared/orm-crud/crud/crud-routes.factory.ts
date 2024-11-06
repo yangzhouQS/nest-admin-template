@@ -512,7 +512,7 @@ export class CrudRoutesFactory {
   }
 
   /**
-   * 设置参数
+   * nest请求路由方法对应的参数
    * @param {BaseRouteName} name
    * @private
    */
