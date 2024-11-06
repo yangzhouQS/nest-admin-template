@@ -1,17 +1,17 @@
-import { CrudOptions } from "../interfaces/crud-options.interface";
-import { BaseRoute } from "../interfaces/base-route.interface";
-import { RequestMethod } from "@nestjs/common";
-import { forEach, get, isFunction, isNil } from "lodash";
-import { BaseRouteName } from "../types/base-route-name.type";
-import { CrudRequest } from "../interfaces/crud-request.interface";
-import { R } from "./reflection.helper";
-import { isEqual, isFalse, isIn, isObjectFull, objKeys } from "../util";
-import { CrudActions } from "../enums";
-import { CrudSwaggerHelper } from "./swagger.helper";
-import { SerializeHelper } from "./serialize.helper";
-import { CrudConfigService } from "../module/crud-config.service";
-import * as deepmerge from "deepmerge";
-import { RouteParamtypes } from "@nestjs/common/enums/route-paramtypes.enum";
+import { CrudOptions } from '../interfaces/crud-options.interface';
+import { BaseRoute } from '../interfaces/base-route.interface';
+import { RequestMethod } from '@nestjs/common';
+import { forEach, get, isFunction, isNil } from 'lodash';
+import { BaseRouteName } from '../types/base-route-name.type';
+import { CrudRequest } from '../interfaces/crud-request.interface';
+import { R } from './reflection.helper';
+import { isEqual, isFalse, isIn, isObjectFull, objKeys } from '../util';
+import { CrudActions } from '../enums';
+import { CrudSwaggerHelper } from './swagger.helper';
+import { SerializeHelper } from './serialize.helper';
+import { CrudConfigService } from '../module/crud-config.service';
+import * as deepmerge from 'deepmerge';
+import { RouteParamtypes } from '@nestjs/common/enums/route-paramtypes.enum';
 
 /**
  * 路由及其swagger配置初始化
@@ -26,9 +26,12 @@ export class CrudRoutesFactory {
    * @param target 装饰器修饰的controller类
    * @param {CrudOptions} options 配置
    */
-  constructor(protected target: any, options: CrudOptions) {
+  constructor(
+    protected target: any,
+    options: CrudOptions,
+  ) {
     this.options = options;
-    console.log("CrudRoutesFactory: ", options, target);
+    console.log('CrudRoutesFactory: ', options, target);
     this.initCrudRoute();
   }
 
@@ -60,7 +63,6 @@ export class CrudRoutesFactory {
      */
     this.createRoutes(routesSchema);
 
-
     /**
      * 覆盖路由
      */
@@ -81,6 +83,10 @@ export class CrudRoutesFactory {
     CrudSwaggerHelper.setControllerTags(tags, this.target);
   }
 
+  /**
+   * 装饰器参数配置合并初始化
+   * @protected
+   */
   protected mergeOptions() {
     // merge auth config
     const authOptions = R.getCrudAuthOptions(this.target);
@@ -95,13 +101,15 @@ export class CrudRoutesFactory {
       this.options.auth.classTransformOptions = CrudConfigService.config.auth.classTransformOptions;
     }*/
 
-    // merge query config
-    this.options.query = isObjectFull(this.options.query) ? this.options.query : {}; // { ...CrudConfigService.config.query, ...query };
+    // merge query config,全局配置->默认配置->装饰器参数
+    this.options.query = isObjectFull(this.options.query)
+      ? this.options.query
+      : {}; // { ...CrudConfigService.config.query, ...query };
 
     // merge routes config
     const routes = isObjectFull(this.options.routes) ? this.options.routes : {};
     this.options.routes = deepmerge(CrudConfigService.config.routes, routes, {
-      arrayMerge: (a, b, c) => b
+      arrayMerge: (a, b, c) => b,
     });
 
     // set params
@@ -114,10 +122,10 @@ export class CrudRoutesFactory {
     this.options.params = {} as any;
     const hasPrimary = this.getPrimaryParams().length > 0;
     if (!hasPrimary) {
-      this.options.params["id"] = {
-        field: "id",
-        type: "number",
-        primary: true
+      this.options.params['id'] = {
+        field: 'id',
+        type: 'number',
+        primary: true,
       };
     }
 
@@ -127,8 +135,13 @@ export class CrudRoutesFactory {
     }
 
     // set serialize
-    const serialize = isObjectFull(this.options.serialize) ? this.options.serialize : {};
-    this.options.serialize = { ...CrudConfigService.config.serialize, ...serialize };
+    const serialize = isObjectFull(this.options.serialize)
+      ? this.options.serialize
+      : {};
+    this.options.serialize = {
+      ...CrudConfigService.config.serialize,
+      ...serialize,
+    };
     this.options.serialize.get = isFalse(this.options.serialize.get)
       ? false
       : this.options.serialize.get || this.modelType;
@@ -138,7 +151,10 @@ export class CrudRoutesFactory {
         ? this.options.serialize.getMany
         : isFalse(this.options.serialize.get)
           ? /* istanbul ignore next */ false
-          : SerializeHelper.createGetManyDto(this.options.serialize.get, this.modelName);
+          : SerializeHelper.createGetManyDto(
+              this.options.serialize.get,
+              this.modelName,
+            );
     this.options.serialize.create = isFalse(this.options.serialize.create)
       ? false
       : this.options.serialize.create || this.modelType;
@@ -149,27 +165,40 @@ export class CrudRoutesFactory {
       ? false
       : this.options.serialize.replace || this.modelType;
     this.options.serialize.delete =
-      isFalse(this.options.serialize.delete) || !this.options.routes.deleteOneBase?.returnDeleted
+      isFalse(this.options.serialize.delete) ||
+      !this.options.routes.deleteOneBase?.returnDeleted
         ? false
         : this.options.serialize.delete || this.modelType;
 
     R.setCrudOptions(this.options, this.target);
   }
 
+  /**
+   * 设置响应数据局dto示例
+   * @protected
+   */
   protected setResponseModels() {
-
     const modelType = isFunction(this.modelType)
       ? this.modelType
       : SerializeHelper.createGetOneResponseDto(this.modelName);
-    this.swaggerModels.get = isFunction(this.options.serialize.get) ? this.options.serialize.get : modelType;
-    this.swaggerModels.getMany =
-      this.options.serialize.getMany || SerializeHelper.createGetManyDto(this.swaggerModels.get, this.modelName);
-    this.swaggerModels.create = isFunction(this.options.serialize.create) ? this.options.serialize.create : modelType;
-    this.swaggerModels.update = isFunction(this.options.serialize.update) ? this.options.serialize.update : modelType;
+    this.swaggerModels.get = isFunction(this.options.serialize.get)
+      ? this.options.serialize.get
+      : modelType;
+    this.swaggerModels['getMany'] =
+      this.options.serialize.getMany ||
+      SerializeHelper.createGetManyDto(this.swaggerModels.get, this.modelName);
+    this.swaggerModels.create = isFunction(this.options.serialize.create)
+      ? this.options.serialize.create
+      : modelType;
+    this.swaggerModels.update = isFunction(this.options.serialize.update)
+      ? this.options.serialize.update
+      : modelType;
     this.swaggerModels.replace = isFunction(this.options.serialize.replace)
       ? this.options.serialize.replace
       : modelType;
-    this.swaggerModels.delete = isFunction(this.options.serialize.delete) ? this.options.serialize.delete : modelType;
+    this.swaggerModels.delete = isFunction(this.options.serialize.delete)
+      ? this.options.serialize.delete
+      : modelType;
     this.swaggerModels.recover = isFunction(this.options.serialize.recover)
       ? this.options.serialize.recover
       : modelType;
@@ -186,15 +215,19 @@ export class CrudRoutesFactory {
   }
 
   protected get modelName(): string {
-    return get(this.options, "model.name", "");
+    return get(this.options, 'model.name', '');
     // return this.options.model.type.name;
   }
 
   protected get modelType(): any {
-    return get(this.options, "model.type", "");
+    return get(this.options, 'model.type', '');
     // return this.options.model.type;
   }
 
+  /**
+   * 操作对应的字符串映射
+   * @protected
+   */
   protected get actionsMap(): { [key in BaseRouteName]: CrudActions } {
     return {
       getManyBase: CrudActions.ReadAll,
@@ -204,36 +237,36 @@ export class CrudRoutesFactory {
       updateOneBase: CrudActions.UpdateOne,
       deleteOneBase: CrudActions.DeleteOne,
       replaceOneBase: CrudActions.ReplaceOne,
-      recoverOneBase: CrudActions.RecoverOne
+      recoverOneBase: CrudActions.RecoverOne,
     };
   }
 
   protected getRoutesSchema(): BaseRoute[] {
     return [
       {
-        name: "getOneBase",
-        path: "/",
+        name: 'getOneBase',
+        path: '/',
         method: RequestMethod.GET,
         enable: false,
         override: false,
-        withParams: true
+        withParams: true,
       },
       {
-        name: "getManyBase",
-        path: "/get-many",
+        name: 'getManyBase',
+        path: '/get-many',
         method: RequestMethod.POST,
         enable: false,
         override: false,
-        withParams: false
+        withParams: false,
       },
       {
-        name: "createOneBase",
-        path: "/create-one",
+        name: 'createOneBase',
+        path: '/create-one',
         method: RequestMethod.POST,
         enable: false,
         override: false,
-        withParams: false
-      }
+        withParams: false,
+      },
     ];
   }
 
@@ -246,7 +279,7 @@ export class CrudRoutesFactory {
       this[route.name](route.name);
       route.enable = true;
 
-      console.log("route:", route);
+      console.log('route:', route);
 
       // set metadata
       this.setBaseRouteMeta(route.name);
@@ -254,11 +287,11 @@ export class CrudRoutesFactory {
       // 设置查询主键的路径参数
       if (route.withParams && primaryParams.length > 0) {
         route.path =
-          route.path !== "/"
-            ? `${primaryParams.map((param) => `/:${param}`).join("")}${
-              route.path
-            }`
-            : primaryParams.map((param) => `/:${param}`).join("");
+          route.path !== '/'
+            ? `${primaryParams.map((param) => `/:${param}`).join('')}${
+                route.path
+              }`
+            : primaryParams.map((param) => `/:${param}`).join('');
       }
     });
   }
@@ -278,18 +311,42 @@ export class CrudRoutesFactory {
         const interceptors = R.getInterceptors(this.targetProto[name]);
         const baseInterceptors = R.getInterceptors(this.targetProto[override]);
         const baseAction = R.getAction(this.targetProto[override]);
-        const operation = CrudSwaggerHelper.getOperation(this.targetProto[name]);
-        const baseOperation = CrudSwaggerHelper.getOperation(this.targetProto[override]);
-        const swaggerParams = CrudSwaggerHelper.getParams(this.targetProto[name]);
-        const baseSwaggerParams = CrudSwaggerHelper.getParams(this.targetProto[override]);
-        const responseOk = CrudSwaggerHelper.getResponseOk(this.targetProto[name]);
-        const baseResponseOk = CrudSwaggerHelper.getResponseOk(this.targetProto[override]);
+        const operation = CrudSwaggerHelper.getOperation(
+          this.targetProto[name],
+        );
+        const baseOperation = CrudSwaggerHelper.getOperation(
+          this.targetProto[override],
+        );
+        const swaggerParams = CrudSwaggerHelper.getParams(
+          this.targetProto[name],
+        );
+        const baseSwaggerParams = CrudSwaggerHelper.getParams(
+          this.targetProto[override],
+        );
+        const responseOk = CrudSwaggerHelper.getResponseOk(
+          this.targetProto[name],
+        );
+        const baseResponseOk = CrudSwaggerHelper.getResponseOk(
+          this.targetProto[override],
+        );
         // set metadata
-        R.setInterceptors([...baseInterceptors, ...interceptors], this.targetProto[name]);
+        R.setInterceptors(
+          [...baseInterceptors, ...interceptors],
+          this.targetProto[name],
+        );
         R.setAction(baseAction, this.targetProto[name]);
-        CrudSwaggerHelper.setOperation({ ...baseOperation, ...operation }, this.targetProto[name]);
-        CrudSwaggerHelper.setParams([...baseSwaggerParams, ...swaggerParams], this.targetProto[name]);
-        CrudSwaggerHelper.setResponseOk({ ...baseResponseOk, ...responseOk }, this.targetProto[name]);
+        CrudSwaggerHelper.setOperation(
+          { ...baseOperation, ...operation },
+          this.targetProto[name],
+        );
+        CrudSwaggerHelper.setParams(
+          [...baseSwaggerParams, ...swaggerParams],
+          this.targetProto[name],
+        );
+        CrudSwaggerHelper.setResponseOk(
+          { ...baseResponseOk, ...responseOk },
+          this.targetProto[name],
+        );
         this.overrideParsedBodyDecorator(override, name);
         // enable route
         R.setRoute(route, this.targetProto[name]);
@@ -312,7 +369,12 @@ export class CrudRoutesFactory {
   }
 
   protected overrideParsedBodyDecorator(override: BaseRouteName, name: string) {
-    const allowed = ["createManyBase", "createOneBase", "updateOneBase", "replaceOneBase"] as BaseRouteName[];
+    const allowed = [
+      'createManyBase',
+      'createOneBase',
+      'updateOneBase',
+      'replaceOneBase',
+    ] as BaseRouteName[];
     const withBody = isIn(override, allowed);
     const parsedBody = R.getParsedBody(this.targetProto[name]);
 
@@ -327,23 +389,27 @@ export class CrudRoutesFactory {
           ...routeArgs,
           [key]: {
             ...baseBodyArg,
-            index: parsedBody.index
-          }
+            index: parsedBody.index,
+          },
         },
         this.target,
-        name
+        name,
       );
 
       /* istanbul ignore else */
-      if (isEqual(override, "createManyBase")) {
+      if (isEqual(override, 'createManyBase')) {
         const paramTypes = R.getRouteArgsTypes(this.targetProto, name);
         const metatype = paramTypes[parsedBody.index];
         const types = [String, Boolean, Number, Array, Object];
-        const toCopy = isIn(metatype, types) || /* istanbul ignore next */ isNil(metatype);
+        const toCopy =
+          isIn(metatype, types) || /* istanbul ignore next */ isNil(metatype);
 
         /* istanbul ignore else */
         if (toCopy) {
-          const baseParamTypes = R.getRouteArgsTypes(this.targetProto, override);
+          const baseParamTypes = R.getRouteArgsTypes(
+            this.targetProto,
+            override,
+          );
           const baseMetatype = baseParamTypes[1];
           paramTypes.splice(parsedBody.index, 1, baseMetatype);
           R.setRouteArgsTypes(paramTypes, this.targetProto, name);
@@ -354,7 +420,8 @@ export class CrudRoutesFactory {
 
   private getPrimaryParams(): string[] {
     return objKeys(this.options.params).filter(
-      (param) => this.options.params[param] && this.options.params[param].primary
+      (param) =>
+        this.options.params[param] && this.options.params[param].primary,
     );
   }
 
@@ -364,19 +431,19 @@ export class CrudRoutesFactory {
    * @protected
    */
   protected getOneBase(name: BaseRouteName) {
-    console.log("targetProto: ", this.targetProto);
+    console.log('targetProto: ', this.targetProto);
     /**
      * 在修饰器原型上创建方法,调用service方法
      * @param {CrudRequest} req
      * @returns {any}
      */
     this.targetProto[name] = function getOneBase(req: CrudRequest) {
-      console.log("req:", req);
-      return "hello getOneBase";
+      console.log('req:', req);
+      return 'hello getOneBase';
       return this.ormService.getOne(req);
     };
 
-    console.log("targetProto: ", this.targetProto);
+    console.log('targetProto: ', this.targetProto);
   }
 
   /**
@@ -396,11 +463,13 @@ export class CrudRoutesFactory {
    * @protected
    */
   protected createOneBase(name: BaseRouteName) {
-    this.targetProto[name] = function createOneBase(req: CrudRequest, dto: any) {
+    this.targetProto[name] = function createOneBase(
+      req: CrudRequest,
+      dto: any,
+    ) {
       return this.ormService.createOne(req, dto);
     };
   }
-
 
   /**
    * 设置路由元数据,swagger初始化
@@ -408,7 +477,6 @@ export class CrudRoutesFactory {
    * @private
    */
   private setBaseRouteMeta(name: BaseRouteName) {
-
     /**
      * 路由参数设置
      */
@@ -472,7 +540,7 @@ export class CrudRoutesFactory {
       [
         /*CrudRequestInterceptor, CrudResponseInterceptor*/
       ],
-      this.targetProto[name]
+      this.targetProto[name],
     );
   }
 
@@ -491,13 +559,13 @@ export class CrudRoutesFactory {
    * @private
    */
   private setSwaggerOperation(name: BaseRouteName) {
-    console.log("setSwaggerOperation: ", name);
+    console.log('setSwaggerOperation: ', name);
     const summary = CrudSwaggerHelper.operationsMap(this.modelName)[name];
     const operationId =
       name + this.targetProto.constructor.name + this.modelName;
     CrudSwaggerHelper.setOperation(
       { summary, operationId },
-      this.targetProto[name]
+      this.targetProto[name],
     );
   }
 
@@ -507,9 +575,12 @@ export class CrudRoutesFactory {
    * @private
    */
   private setSwaggerPathParams(name: BaseRouteName) {
-
     const metadata = CrudSwaggerHelper.getParams(this.targetProto[name]);
-    const withoutPrimary: BaseRouteName[] = ["createManyBase", "createOneBase", "getManyBase"];
+    const withoutPrimary: BaseRouteName[] = [
+      'createManyBase',
+      'createOneBase',
+      'getManyBase',
+    ];
 
     const removePrimary = isIn(name, withoutPrimary);
     const params = objKeys(this.options.params)
@@ -518,8 +589,10 @@ export class CrudRoutesFactory {
       .reduce((a, c) => ({ ...a, [c]: this.options.params[c] }), {});
 
     const pathParamsMeta = CrudSwaggerHelper.createPathParamsMeta(params);
-    CrudSwaggerHelper.setParams([...metadata, ...pathParamsMeta], this.targetProto[name]);
-
+    CrudSwaggerHelper.setParams(
+      [...metadata, ...pathParamsMeta],
+      this.targetProto[name],
+    );
   }
 
   /**
@@ -529,8 +602,14 @@ export class CrudRoutesFactory {
    */
   private setSwaggerQueryParams(name: BaseRouteName) {
     const metadata = CrudSwaggerHelper.getParams(this.targetProto[name]);
-    const queryParamsMeta = CrudSwaggerHelper.createQueryParamsMeta(name, this.options);
-    CrudSwaggerHelper.setParams([...metadata, ...queryParamsMeta], this.targetProto[name]);
+    const queryParamsMeta = CrudSwaggerHelper.createQueryParamsMeta(
+      name,
+      this.options,
+    );
+    CrudSwaggerHelper.setParams(
+      [...metadata, ...queryParamsMeta],
+      this.targetProto[name],
+    );
   }
 
   /**
@@ -541,8 +620,15 @@ export class CrudRoutesFactory {
   private setSwaggerResponseOk(name: BaseRouteName) {
     const metadata = CrudSwaggerHelper.getResponseOk(this.targetProto[name]);
     const metadataToAdd =
-      CrudSwaggerHelper.createResponseMeta(name, this.options, this.swaggerModels) || /* istanbul ignore next */ {};
-    CrudSwaggerHelper.setResponseOk({ ...metadata, ...metadataToAdd }, this.targetProto[name]);
+      CrudSwaggerHelper.createResponseMeta(
+        name,
+        this.options,
+        this.swaggerModels,
+      ) || /* istanbul ignore next */ {};
+    CrudSwaggerHelper.setResponseOk(
+      { ...metadata, ...metadataToAdd },
+      this.targetProto[name],
+    );
   }
 
   /**
@@ -552,6 +638,10 @@ export class CrudRoutesFactory {
    */
   private setDecorators(name: BaseRouteName) {
     const decorators = get(this.options, `routes[${name}].decorators`, []); // this.options.routes[name].decorators;
-    R.setDecorators(Array.isArray(decorators) ? /* istanbul ignore next */ decorators : [], this.targetProto, name);
+    R.setDecorators(
+      Array.isArray(decorators) ? /* istanbul ignore next */ decorators : [],
+      this.targetProto,
+      name,
+    );
   }
 }

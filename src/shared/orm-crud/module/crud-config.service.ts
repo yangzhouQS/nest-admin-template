@@ -1,6 +1,7 @@
 import * as deepmerge from 'deepmerge';
-import { isObjectFull } from "../util";
-import { CrudGlobalConfig } from "../interfaces/crud-global-config.interface";
+import { isObjectFull } from '../util';
+import { CrudGlobalConfig } from '../interfaces/crud-global-config.interface';
+import { RequestQueryBuilder } from '../crud-request/request-query.builder';
 
 export class CrudConfigService {
   static config: CrudGlobalConfig = {
@@ -12,13 +13,32 @@ export class CrudConfigService {
       getManyBase: { interceptors: [], decorators: [] },
       getOneBase: { interceptors: [], decorators: [] },
       createOneBase: { interceptors: [], decorators: [], returnShallow: false },
+      createManyBase: { interceptors: [], decorators: [] },
+      updateOneBase: {
+        interceptors: [],
+        decorators: [],
+        allowParamsOverride: false,
+        returnShallow: false,
+      },
+      replaceOneBase: {
+        interceptors: [],
+        decorators: [],
+        allowParamsOverride: false,
+        returnShallow: false,
+      },
+      deleteOneBase: { interceptors: [], decorators: [], returnDeleted: false },
+      recoverOneBase: {
+        interceptors: [],
+        decorators: [],
+        returnRecovered: false,
+      },
     },
     params: {},
   };
 
   static load(config: CrudGlobalConfig = {}) {
     if (isObjectFull(config.queryParser)) {
-      // RequestQueryBuilder.setOptions(config.queryParser);
+      RequestQueryBuilder.setOptions(config.queryParser);
     }
 
     const auth = isObjectFull(config.auth) ? config.auth : {};

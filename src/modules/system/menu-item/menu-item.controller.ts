@@ -13,11 +13,20 @@ import {
 import { MenuItemService } from './menu-item.service';
 import { CreateMenuItemDto } from './dto/create-menu-item.dto';
 import { UpdateMenuItemDto } from './dto/update-menu-item.dto';
-import { ApiOperation, ApiOkResponse, ApiQuery } from '@nestjs/swagger';
+import {
+  ApiOperation,
+  ApiOkResponse,
+  ApiQuery,
+  ApiExtraModels,
+  getSchemaPath,
+} from '@nestjs/swagger';
 import { OrmCrud } from '../../../shared/orm-crud';
 import { OrmCrudController } from '../../../shared/orm-crud/interfaces/orm-crud-controller.interface';
 import { SMenuItemEntity } from '../../../entities/system-modules';
 import { Pagination } from '../../../shared/typeorm-paginate';
+import { PaginatedDto } from './dto/Paginated.dto';
+import { MenuItemDto } from './dto/menu-item.dto';
+import { ApiPaginatedResponse } from '../../../decorators/api-paginated-response.decorate';
 
 @OrmCrud({
   tags: ['system:menu菜单管理'],
@@ -44,6 +53,7 @@ import { Pagination } from '../../../shared/typeorm-paginate';
   // params: {},
   // query: {}
 })
+@ApiExtraModels(PaginatedDto, MenuItemDto)
 @Controller('menu-item')
 export class MenuItemController implements OrmCrudController<SMenuItemEntity> {
   constructor(
@@ -60,20 +70,27 @@ export class MenuItemController implements OrmCrudController<SMenuItemEntity> {
   }
 
   @ApiOperation({ summary: '分页查询' })
-  @ApiOkResponse({
+  @ApiExtraModels()
+  /*@ApiOkResponse({
     description: '分页查询返回数据',
     // type: Pagination<SMenuItemEntity>,
     schema: {
-      type: 'object',
-      properties: {
-        data: {
-          type: 'array',
-          items: { $ref: '#/components/schemas/SMenuItemEntity' },
+      allOf: [
+        //allOf 是 OAS 3 提供的概念，用于涵盖各种与继承相关的用例。
+        { $ref: getSchemaPath(PaginatedDto) },
+        // 由于你并没有直接绑定 PaginatedDto 所以你需要把这个 model加到 ApiExtraModels 中去
+        {
+          properties: {
+            results: {
+              type: 'array',
+              items: { $ref: getSchemaPath(MenuItemDto) },
+            },
+          },
         },
-        total: { type: 'number' },
-      },
+      ],
     },
-  })
+  })*/
+  @ApiPaginatedResponse(MenuItemDto)
   @ApiQuery({
     name: 'page',
     required: false,
