@@ -12,6 +12,8 @@ import { SerializeHelper } from './serialize.helper';
 import { CrudConfigService } from '../module/crud-config.service';
 import * as deepmerge from 'deepmerge';
 import { RouteParamtypes } from '@nestjs/common/enums/route-paramtypes.enum';
+import { ROUTE_ARGS_METADATA } from '@nestjs/common/constants';
+import { DECORATORS } from '@nestjs/swagger/dist/constants';
 
 /**
  * 路由及其swagger配置初始化
@@ -251,7 +253,7 @@ export class CrudRoutesFactory {
         override: false,
         withParams: true,
       },
-      {
+      /*{
         name: 'getManyBase',
         path: '/get-many',
         method: RequestMethod.POST,
@@ -266,7 +268,7 @@ export class CrudRoutesFactory {
         enable: false,
         override: false,
         withParams: false,
-      },
+      },*/
     ];
   }
 
@@ -490,20 +492,20 @@ export class CrudRoutesFactory {
     /**
      * 设置拦截器
      */
-    this.setInterceptors(name);
+    // this.setInterceptors(name);
 
     /**
      * 设置action 操作
      */
-    this.setAction(name);
+    // this.setAction(name);
 
     /**
      * 设置单个接口swagger元数据标题
      */
     this.setSwaggerOperation(name);
-    this.setSwaggerPathParams(name);
-    this.setSwaggerQueryParams(name);
-    this.setSwaggerResponseOk(name);
+    // this.setSwaggerPathParams(name);
+    // this.setSwaggerQueryParams(name);
+    // this.setSwaggerResponseOk(name);
     /**
      * 设置装饰器,swagger元数据可以覆盖
      */
@@ -518,7 +520,26 @@ export class CrudRoutesFactory {
    */
   private setRouteArgs(name: BaseRouteName) {
     const rest = {};
-    R.setRouteArgs({ ...R.setParsedRequestArg(0), ...rest }, this.target, name);
+
+    /*
+    * {
+    'NESTJSX_PARSED_CRUD_REQUEST_KEY__customRouteArgs__:0': {
+        index: 0,
+        factory: [Function: factory],
+        data: undefined,
+        pipes: []
+      }
+    }
+    *
+    * */
+
+    /*Reflect.defineMetadata(
+      ROUTE_ARGS_METADATA,
+      {},
+      this.target.constructor,
+      name,
+    );*/
+    // R.setRouteArgs({ ...R.setParsedRequestArg(0), ...rest }, this.target, name);
   }
 
   /**
@@ -527,7 +548,7 @@ export class CrudRoutesFactory {
    * @private
    */
   private setRouteArgsTypes(name: BaseRouteName) {
-    R.setRouteArgsTypes([Object], this.targetProto, name);
+    // R.setRouteArgsTypes([Object], this.targetProto, name);
   }
 
   /**
@@ -554,7 +575,8 @@ export class CrudRoutesFactory {
   }
 
   /**
-   * 设置swagger 操作
+   * 设置接口标题
+   * @ApiOperation({})
    * @param {BaseRouteName} name
    * @private
    */
@@ -563,10 +585,39 @@ export class CrudRoutesFactory {
     const summary = CrudSwaggerHelper.operationsMap(this.modelName)[name];
     const operationId =
       name + this.targetProto.constructor.name + this.modelName;
-    CrudSwaggerHelper.setOperation(
+
+    // 设置接口标题和接口id
+    Reflect.defineMetadata(
+      DECORATORS.API_OPERATION,
+      {
+        // tags: '666',
+        summary: 'hello' + summary,
+        operationId: operationId,
+        description: '当前接口的描述 - description',
+        externalDocs: {
+          // 外部文档配置
+          description: '外部文档配置',
+          url: 'https://www.baidu.com/',
+        },
+        // deprecated: true, // 接口是否废弃
+        // 配置服务请求接口
+        /*servers: [
+          {
+            url: 'http://localhost:9999',
+            description: '测试环境',
+            variables: {
+              a: '11',
+              b: '222',
+            },
+          },
+        ],*/
+      },
+      this.targetProto[name], // 合并到类上的方法
+    );
+    /*CrudSwaggerHelper.setOperation(
       { summary, operationId },
       this.targetProto[name],
-    );
+    );*/
   }
 
   /**

@@ -6,8 +6,8 @@ import { ServeMonitoringModule } from './serve-monitoring/serve-monitoring.modul
 
 @Module({
   imports: [
-    ModuleModule,
-    PlatformLogModule,
+    // ModuleModule,
+    // PlatformLogModule,
     MenuItemModule,
     ServeMonitoringModule,
   ],
