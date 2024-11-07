@@ -19,6 +19,7 @@ import {
   ApiQuery,
   ApiExtraModels,
   getSchemaPath,
+  ApiParam,
 } from '@nestjs/swagger';
 import { OrmCrud } from '../../../shared/orm-crud';
 import { OrmCrudController } from '../../../shared/orm-crud/interfaces/orm-crud-controller.interface';
@@ -113,12 +114,21 @@ export class MenuItemController implements OrmCrudController<SMenuItemEntity> {
       default: 10,
     },
   })
-  @Post('/page')
+  @ApiParam({
+    type: Number,
+    name: 'orgId',
+    description: '机构id',
+    required: true,
+    example: 10086,
+  })
+  @Post('/page/:orgId')
   async page(
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number = 1,
     @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number = 10,
+    @Param('orgId', ParseIntPipe) orgId: number,
   ) {
     limit = limit > 100 ? 100 : limit;
+    console.log('orgId = ', orgId);
     return this.menuItemService.page({
       page,
       limit,

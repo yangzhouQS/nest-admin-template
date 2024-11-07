@@ -503,8 +503,12 @@ export class CrudRoutesFactory {
      * 设置单个接口swagger元数据标题
      */
     this.setSwaggerOperation(name);
-    // this.setSwaggerPathParams(name);
-    // this.setSwaggerQueryParams(name);
+
+    // 设置路径参数 @ApiParam() /:id
+    this.setSwaggerPathParams(name);
+
+    this.setSwaggerQueryParams(name);
+
     // this.setSwaggerResponseOk(name);
     /**
      * 设置装饰器,swagger元数据可以覆盖
@@ -621,7 +625,14 @@ export class CrudRoutesFactory {
   }
 
   /**
-   * 设置swagger 路径参数
+   * 设置swagger router的 路径参数
+   * @ApiParam({
+   *     type: Number,
+   *     name: 'orgId',
+   *     description: '机构id',
+   *     required: true,
+   *     example: 10086,
+   *   })
    * @param {BaseRouteName} name
    * @private
    */
@@ -640,27 +651,83 @@ export class CrudRoutesFactory {
       .reduce((a, c) => ({ ...a, [c]: this.options.params[c] }), {});
 
     const pathParamsMeta = CrudSwaggerHelper.createPathParamsMeta(params);
-    CrudSwaggerHelper.setParams(
-      [...metadata, ...pathParamsMeta],
+
+    /*
+    params = {
+      "id": {
+        "field": "id",
+        "type": "number",
+        "primary": true
+      }
+    }
+
+    pathParamsMeta = [
+      {
+        "name": "id",
+        "required": true,
+        "in": "path"
+      }
+    ]
+    */
+
+    const testItems = [
+      {
+        name: 'id',
+        required: true,
+        in: 'path',
+        type: Number,
+        description: '主键ID',
+      },
+    ];
+    Reflect.defineMetadata(
+      DECORATORS.API_PARAMETERS,
+      testItems,
       this.targetProto[name],
     );
+    /*CrudSwaggerHelper.setParams(
+      [...metadata, ...pathParamsMeta],
+      this.targetProto[name],
+    );*/
   }
 
   /**
-   * 设置swagger 查询参数
+   * 设置swagger query 查询参数
    * @param {BaseRouteName} name
    * @private
    */
   private setSwaggerQueryParams(name: BaseRouteName) {
+    // 全局load配置的query参数, 之前设置的path参数
     const metadata = CrudSwaggerHelper.getParams(this.targetProto[name]);
+
+    // 当前请求方法配置的query参数
     const queryParamsMeta = CrudSwaggerHelper.createQueryParamsMeta(
       name,
       this.options,
     );
-    CrudSwaggerHelper.setParams(
-      [...metadata, ...queryParamsMeta],
+
+    const queryItems = [
+      {
+        name: 'companyId',
+        required: false,
+        in: 'query',
+        type: 'number',
+        description: '公司ID',
+        example: 10086,
+      },
+    ];
+    metadata.push(...queryItems);
+
+    Reflect.defineMetadata(
+      DECORATORS.API_PARAMETERS,
+      [...queryItems, ...metadata],
       this.targetProto[name],
     );
+
+    // API_PARAMETERS
+    /*CrudSwaggerHelper.setParams(
+       [...metadata, ...queryParamsMeta],
+      this.targetProto[name],
+    );*/
   }
 
   /**
