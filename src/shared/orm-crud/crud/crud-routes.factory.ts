@@ -1,6 +1,6 @@
 import { CrudOptions } from '../interfaces/crud-options.interface';
 import { BaseRoute } from '../interfaces/base-route.interface';
-import { RequestMethod } from '@nestjs/common';
+import { HttpStatus, RequestMethod } from '@nestjs/common';
 import { forEach, get, isFunction, isNil } from 'lodash';
 import { BaseRouteName } from '../types/base-route-name.type';
 import { CrudRequest } from '../interfaces/crud-request.interface';
@@ -14,6 +14,8 @@ import * as deepmerge from 'deepmerge';
 import { RouteParamtypes } from '@nestjs/common/enums/route-paramtypes.enum';
 import { ROUTE_ARGS_METADATA } from '@nestjs/common/constants';
 import { DECORATORS } from '@nestjs/swagger/dist/constants';
+import { Type } from 'class-transformer';
+import { MenuItemDto } from '../../../modules/system/menu-item/dto/menu-item.dto';
 
 /**
  * 路由及其swagger配置初始化
@@ -507,9 +509,11 @@ export class CrudRoutesFactory {
     // 设置路径参数 @ApiParam() /:id
     this.setSwaggerPathParams(name);
 
+    // 设置查询参数 @ApiQuery() ?name=test&age=18
     this.setSwaggerQueryParams(name);
 
-    // this.setSwaggerResponseOk(name);
+    // 设置响应 @ApiResponse()
+    this.setSwaggerResponseOk(name);
     /**
      * 设置装饰器,swagger元数据可以覆盖
      */
@@ -754,10 +758,38 @@ export class CrudRoutesFactory {
         this.options,
         this.swaggerModels,
       ) || /* istanbul ignore next */ {};
-    CrudSwaggerHelper.setResponseOk(
-      { ...metadata, ...metadataToAdd },
+
+    const responseDto = {
+      // ...metadata,
+      // ...metadataToAdd,
+      // type: 'hello world',
+      // status: 200,
+      // isArray: false,
+      description: '操作成功',
+      examples: {
+        summary: 'ok',
+        value: {
+          a: 1,
+          b: 2,
+        },
+      },
+
+      [HttpStatus.OK]: {
+        description: '操作成功',
+        type: MenuItemDto,
+      },
+    };
+
+    Reflect.defineMetadata(
+      DECORATORS.API_RESPONSE,
+      responseDto,
       this.targetProto[name],
     );
+
+    /*CrudSwaggerHelper.setResponseOk(
+      { ...metadata, ...metadataToAdd },
+      this.targetProto[name],
+    );*/
   }
 
   /**
