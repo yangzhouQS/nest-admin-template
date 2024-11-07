@@ -691,6 +691,17 @@ export class CrudRoutesFactory {
   }
 
   /**
+   * @ApiQuery({
+   *     name: 'limit',
+   *     required: false,
+   *     type: Number,
+   *     description: '页大小',
+   *     example: 10,
+   *     schema: {
+   *       type: 'number',
+   *       default: 10,
+   *     },
+   *   })
    * 设置swagger query 查询参数
    * @param {BaseRouteName} name
    * @private
@@ -708,9 +719,9 @@ export class CrudRoutesFactory {
     const queryItems = [
       {
         name: 'companyId',
-        required: false,
+        required: true,
         in: 'query',
-        type: 'number',
+        type: Number,
         description: '公司ID',
         example: 10086,
       },
