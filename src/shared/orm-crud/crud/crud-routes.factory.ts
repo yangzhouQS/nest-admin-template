@@ -422,6 +422,11 @@ export class CrudRoutesFactory {
     }
   }
 
+  /**
+   * 主键判断
+   * @returns {string[]}
+   * @private
+   */
   private getPrimaryParams(): string[] {
     return objKeys(this.options.params).filter(
       (param) =>
