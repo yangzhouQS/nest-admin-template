@@ -8,5 +8,6 @@ import { SMenuItemEntity } from '../../../entities/system-modules';
   imports: [TypeOrmModule.forFeature([SMenuItemEntity])],
   controllers: [MenuItemController],
   providers: [MenuItemService],
+  exports: [MenuItemService],
 })
 export class MenuItemModule {}

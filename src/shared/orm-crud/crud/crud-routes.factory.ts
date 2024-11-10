@@ -60,7 +60,7 @@ export class CrudRoutesFactory {
     /**
      * 设置返回模型
      */
-    // this.setResponseModels();
+    this.setResponseModels();
 
     /**
      * 创建路由,生成设置nest路由配置
@@ -75,7 +75,7 @@ export class CrudRoutesFactory {
     /**
      * 启用路由
      */
-    this.enableRoutes(routesSchema);
+    // this.enableRoutes(routesSchema);
   }
 
   /**
@@ -440,7 +440,6 @@ export class CrudRoutesFactory {
    * @protected
    */
   protected getOneBase(name: BaseRouteName) {
-    console.log('targetProto: ', this.targetProto);
     /**
      * 在修饰器原型上创建方法,调用service方法
      * @param {CrudRequest} req
@@ -452,7 +451,7 @@ export class CrudRoutesFactory {
       return this.ormService.getOne(req);
     };
 
-    console.log('targetProto: ', this.targetProto);
+    console.log('getOneBase targetProto: ', this.targetProto);
   }
 
   /**
@@ -489,12 +488,13 @@ export class CrudRoutesFactory {
     /**
      * 路由参数设置
      */
-    this.setRouteArgs(name);
+    // this.setRouteArgs(name);
+    // this.setRouteArgs(name);
 
     /**
      * 路由参数类型设置
      */
-    this.setRouteArgsTypes(name);
+    // this.setRouteArgsTypes(name);
 
     /**
      * 设置拦截器
@@ -509,7 +509,7 @@ export class CrudRoutesFactory {
     /**
      * 设置单个接口swagger元数据标题
      */
-    this.setSwaggerOperation(name);
+    /*this.setSwaggerOperation(name);
 
     // 设置路径参数 @ApiParam() /:id
     this.setSwaggerPathParams(name);
@@ -519,11 +519,11 @@ export class CrudRoutesFactory {
 
     // 设置响应 @ApiResponse()
     this.setSwaggerResponseOk(name);
-    /**
+    /!**
      * 设置装饰器,swagger元数据可以覆盖
-     */
+     *!/
     // set decorators after Swagger so metadata can be overwritten
-    this.setDecorators(name);
+    this.setDecorators(name);*/
   }
 
   /**
@@ -534,6 +534,7 @@ export class CrudRoutesFactory {
   private setRouteArgs(name: BaseRouteName) {
     const rest = {};
 
+    console.log(`setRouteArgs = ${name}`);
     /*
     * {
     'NESTJSX_PARSED_CRUD_REQUEST_KEY__customRouteArgs__:0': {
@@ -553,6 +554,7 @@ export class CrudRoutesFactory {
       name,
     );*/
     // R.setRouteArgs({ ...R.setParsedRequestArg(0), ...rest }, this.target, name);
+    R.setRouteArgs({a:222}, this.target, name);
   }
 
   /**

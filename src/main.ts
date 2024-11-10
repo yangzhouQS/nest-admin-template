@@ -10,7 +10,7 @@ async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {});
 
   // 替换日志器
-  app.useLogger(app.get(WINSTON_MODULE_NEST_PROVIDER));
+  // app.useLogger(app.get(WINSTON_MODULE_NEST_PROVIDER));
 
   app.useGlobalPipes(
     new ValidationPipe({

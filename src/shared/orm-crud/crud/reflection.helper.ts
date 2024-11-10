@@ -96,10 +96,10 @@ export class R {
   }
 
   static setParsedRequestArg(index: number) {
-    const tss = R.createCustomRouteArg(PARSED_CRUD_REQUEST_KEY, index);
-    console.log(tss);
+    const newRouteArg = R.createCustomRouteArg(PARSED_CRUD_REQUEST_KEY, index);
+    console.log('createCustomRouteArg newRouteArg : ',newRouteArg);
 
-    return tss;
+    return newRouteArg;
   }
 
   static setBodyArg(

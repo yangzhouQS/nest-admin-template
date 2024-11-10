@@ -2,6 +2,7 @@ import { Type, ValidationPipeOptions } from '@nestjs/common';
 import { ObjectLiteral } from '../util';
 import { ModelOptions } from './model-options.interface';
 import { CrudRoutesFactory } from '../crud/crud-routes.factory';
+import { ParamsOptions } from "../crud-request";
 
 export interface CrudRequestOptions {
   query?: Record<string, any>;
@@ -73,7 +74,7 @@ export interface CrudOptions {
   query?: ObjectLiteral;
   routes?: ObjectLiteral;
   routesFactory?: typeof CrudRoutesFactory;
-  params?: CrudRoutesFactory;
+  params?: ParamsOptions;
 
   /**
    * 接受ValidationPipe选项或者false如果您想使用自己的验证实现。
