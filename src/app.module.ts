@@ -33,9 +33,6 @@ import winstonLogger from './common/winston.config';
         timezone: 'Asia/Shanghai', // 设置时区为中国
       },*/
       charset: 'utf8mb4',
-      extra: {
-        // timezone: "Asia/Shanghai" // 设置时区为中国
-      },
     }),
     WinstonModule.forRoot({
       level: 'info',

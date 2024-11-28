@@ -47,7 +47,7 @@ export class CrudRoutesFactory {
    * 路由配置初始化
    * @private
    */
-  private initCrudRoute() {
+  protected initCrudRoute() {
     const routesSchema = this.getRoutesSchema();
     /**
      * 合并装饰器参数配置
@@ -60,7 +60,7 @@ export class CrudRoutesFactory {
     /**
      * 设置返回模型
      */
-    this.setResponseModels();
+    // this.setResponseModels();
 
     /**
      * 创建路由,生成设置nest路由配置
@@ -83,7 +83,7 @@ export class CrudRoutesFactory {
    * @private
    */
   private setControllerTags() {
-    const tags = this.options.tags || [this.modelType];
+    const tags = this.options.tags || [this.modelType.name];
     CrudSwaggerHelper.setControllerTags(tags, this.target);
   }
 
@@ -106,9 +106,13 @@ export class CrudRoutesFactory {
     }*/
 
     // merge query config,全局配置->默认配置->装饰器参数
-    this.options.query = isObjectFull(this.options.query)
-      ? this.options.query
-      : {}; // { ...CrudConfigService.config.query, ...query };
+    // this.options.query = isObjectFull(this.options.query)
+    //   ? this.options.query
+    //   : {}; // { ...CrudConfigService.config.query, ...query };
+
+    this.options.query = {
+      alwaysPaginate: false,
+    };
 
     // merge routes config
     const routes = isObjectFull(this.options.routes) ? this.options.routes : {};
@@ -174,6 +178,7 @@ export class CrudRoutesFactory {
         ? false
         : this.options.serialize.delete || this.modelType;
 
+    // 在controller设置options配置元数据
     R.setCrudOptions(this.options, this.target);
   }
 
@@ -276,14 +281,24 @@ export class CrudRoutesFactory {
 
   private createRoutes(routesSchema: BaseRoute[]) {
     // 位置参数
-    const primaryParams = this.getPrimaryParams();
+    // const primaryParams = this.getPrimaryParams();
+
+    /// ['id'];
+    const primaryParams = this.getPrimaryParams().filter(
+      (param) => !this.options.params[param].disabled,
+    );
 
     forEach(routesSchema, (route: BaseRoute) => {
       // controller bind method call service method
+      // this.getOneBase()
+
+      /**
+       * 将controller处理函数保存至 this.targetProto[name] 属性中
+       */
       this[route.name](route.name);
       route.enable = true;
 
-      console.log('route:', route);
+      console.log('xxx route:', route);
 
       // set metadata
       this.setBaseRouteMeta(route.name);
@@ -296,6 +311,8 @@ export class CrudRoutesFactory {
                 route.path
               }`
             : primaryParams.map((param) => `/:${param}`).join('');
+
+        console.log('route.path:', route.path);
       }
     });
   }
@@ -488,28 +505,25 @@ export class CrudRoutesFactory {
     /**
      * 路由参数设置
      */
+    this.setRouteArgsTypes(name);
+    this.setRouteArgs(name);
     // this.setRouteArgs(name);
-    // this.setRouteArgs(name);
-
     /**
      * 路由参数类型设置
      */
     // this.setRouteArgsTypes(name);
-
     /**
      * 设置拦截器
      */
     // this.setInterceptors(name);
-
     /**
      * 设置action 操作
      */
     // this.setAction(name);
-
     /**
      * 设置单个接口swagger元数据标题
      */
-    /*this.setSwaggerOperation(name);
+    this.setSwaggerOperation(name);
 
     // 设置路径参数 @ApiParam() /:id
     this.setSwaggerPathParams(name);
@@ -519,11 +533,11 @@ export class CrudRoutesFactory {
 
     // 设置响应 @ApiResponse()
     this.setSwaggerResponseOk(name);
-    /!**
+    /**
      * 设置装饰器,swagger元数据可以覆盖
-     *!/
+     */
     // set decorators after Swagger so metadata can be overwritten
-    this.setDecorators(name);*/
+    this.setDecorators(name);
   }
 
   /**
@@ -553,8 +567,11 @@ export class CrudRoutesFactory {
       this.target.constructor,
       name,
     );*/
-    // R.setRouteArgs({ ...R.setParsedRequestArg(0), ...rest }, this.target, name);
-    R.setRouteArgs({a:222}, this.target, name);
+    // const xs = R.setParsedRequestArg(0);
+    // console.log(xs);
+
+    R.setRouteArgs({ ...R.setParsedRequestArg(0), ...rest }, this.target, name);
+    // R.setRouteArgs({ a: 222 }, this.target, name);
   }
 
   /**
@@ -563,7 +580,7 @@ export class CrudRoutesFactory {
    * @private
    */
   private setRouteArgsTypes(name: BaseRouteName) {
-    // R.setRouteArgsTypes([Object], this.targetProto, name);
+    R.setRouteArgsTypes([Object], this.targetProto, name);
   }
 
   /**
