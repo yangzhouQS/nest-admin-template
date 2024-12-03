@@ -6,3 +6,5 @@ export * from './types';
 export * from './module';
 export * from './interceptors';
 export * from './services';
+
+export { OrmCrud } from './decorators/crud.decorator';

@@ -22,6 +22,9 @@
       "node_modules/@types",
       "src/shared/types",
       "node_modules/@nestjs/typeorm/index.d.ts"
+    ],
+    "include": [
+      "packages/crud-typeorm/src/**/*"
     ]
   }
 }

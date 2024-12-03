@@ -21,21 +21,60 @@ import {
   getSchemaPath,
   ApiParam,
 } from '@nestjs/swagger';
+import { OrmCrud } from '../../../shared/orm-crud';
 import { OrmCrudController } from '../../../shared/orm-crud/interfaces/orm-crud-controller.interface';
 import { SMenuItemEntity } from '../../../entities/system-modules';
 import { Pagination } from '../../../shared/typeorm-paginate';
 import { PaginatedDto } from './dto/Paginated.dto';
 import { MenuItemDto } from './dto/menu-item.dto';
 import { ApiPaginatedResponse } from '../../../decorators/api-paginated-response.decorate';
-import { OrmCrud } from 'crud-typeorm';
 
 @OrmCrud({
   tags: ['system:menu菜单管理'],
   model: {
     type: SMenuItemEntity,
   },
+  // validation: false,
+  /*params: {
+    uid: { // uid
+      field: "uid", // 字段
+      type: "uuid", // 类型
+      primary: true, // 是否为主键
+      disabled: false // 是否禁用
+    }
+  }*/
+  /*routes: {
+    only: [],
+    exclude: [],
+
+    getManyBase?: {
+      interceptors?: [],
+      decorators?: [],
+
+      interceptors -自定义拦截器的数组
+      decorators -自定义装饰器的数组
+      allowParamsOverride -是否允许PATH请求上的URL参数覆盖正文数据。默认值：false
+      returnObject-是否应该在响应请求的响应体中返回实体对象。默认值：false returnShallow -是否返回浅实体
+    },
+    getOneBase?: {
+      interceptors?: [],
+      decorators?: [],
+    },
+  },*/
+  // validate: false,
+  // model: SMenuItemEntity,
+  // params: {},
+  // query: {}
 })
 @ApiExtraModels(PaginatedDto, MenuItemDto)
+// @Controller("menu-item")
+/*@Controller({
+  // prefix: ["menu-itemxx"],
+  path: "menu-item-2",
+  version: "1",
+  host: ["http://127.0.0.1:3000", "https://nestjs.com"],
+
+})*/
 @Controller('menu-item')
 export class MenuItemController implements OrmCrudController<SMenuItemEntity> {
   constructor(
