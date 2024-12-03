@@ -16,6 +16,7 @@ export interface CrudRequestOptions {
 }
 
 export interface CrudOptions {
+  tags?: string[];
   model: ModelOptions;
   dto?: DtoOptions;
   serialize?: SerializeOptions;
