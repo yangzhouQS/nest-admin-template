@@ -44,7 +44,7 @@ const winstonLogger = createLogger({
       maxSize: '20m',
       maxFiles: '14d',
     }),
-    new transports.Console({
+    /*new transports.Console({
       format: format.combine(
         format.colorize({
           colors: levelsColors,
@@ -52,7 +52,7 @@ const winstonLogger = createLogger({
         format.simple(),
         format.printf((info) => {
           // 获取 Info Symbols key
-          const symbols = Object.getOwnPropertySymbols(info);
+          const symbols = Object.getOwnPropertySymbols(info) as any;
           // const color = levelsColors[info[symbols[0]]]; // 获取日志级别的颜色
           // const chalkColor = chalk[color];
           const message = `${chalk.yellow(info.timestamp)} ${chalk.green(
@@ -62,7 +62,7 @@ const winstonLogger = createLogger({
         }),
       ),
       level: 'debug',
-    }),
+    }),*/
   ],
 });
 
