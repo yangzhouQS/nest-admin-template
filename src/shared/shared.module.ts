@@ -5,6 +5,7 @@ import {ScheduleModule} from '@nestjs/schedule';
 import {EventEmitterModule} from '@nestjs/event-emitter';
 import {ThrottlerModule} from '@nestjs/throttler';
 import {PrismaModule} from './prisma/prisma.module';
+import {PrismaService} from "./prisma/prisma.service";
 
 @Global()
 @Module({
@@ -33,8 +34,8 @@ import {PrismaModule} from './prisma/prisma.module';
     PrismaModule,
   ],
   controllers: [],
-  providers: [],
-  exports: [HttpModule, RedisModule, PrismaModule],
+  providers: [PrismaService],
+  exports: [PrismaService, HttpModule, RedisModule],
 })
 export class SharedModule {
 }

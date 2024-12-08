@@ -6,6 +6,7 @@
 
 generator client {
   provider        = "prisma-client-js"
+  // output          = "../node_modules/.prisma/client"
   output          = "./common/prisma-client"
   previewFeatures = ["views", "relationJoins", "prismaSchemaFolder", "omitApi"]
   // 这里可以指定平台引擎，native就是当前系统， 如果需要其他系统的自行添加，或者到目标系统执行npx prisma generate
