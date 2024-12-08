@@ -20,7 +20,6 @@
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
     "paths": {
-      "crud-typeorm/*": ["packages/crud-typeorm/*"]
     },
     "typeRoots": [
       "node_modules/@types",
@@ -28,7 +27,6 @@
       "node_modules/@nestjs/typeorm/index.d.ts"
     ],
     "include": [
-      "packages/crud-typeorm/src/**/*"
     ]
   }
 }

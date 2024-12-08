@@ -1,0 +1,8 @@
+model article {
+  id        BigInt   @id @default(autoincrement()) @db.UnsignedBigInt
+  title     String   @db.VarChar(255)
+  content   String   @db.Text
+  thumb     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

@@ -5,6 +5,14 @@ https://github.com/hantsy/nestjs-rest-sample
 
 https://github.com/dromara/warm-flow
 ```
+## prisma
+``` 
+数据迁移: npx prisma migrate dev
+
+
+
+```
+
 
 ## 配置管理
 
