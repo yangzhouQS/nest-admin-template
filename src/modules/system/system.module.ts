@@ -3,6 +3,7 @@ import { ModuleModule } from './module/module.module';
 import { PlatformLogModule } from './platform-log/platform-log.module';
 import { MenuItemModule } from './menu-item/menu-item.module';
 import { ServeMonitoringModule } from './serve-monitoring/serve-monitoring.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -10,6 +11,7 @@ import { ServeMonitoringModule } from './serve-monitoring/serve-monitoring.modul
     // PlatformLogModule,
     MenuItemModule,
     ServeMonitoringModule,
+    AuthModule,
   ],
 })
 export class SystemModule {}

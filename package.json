@@ -6,13 +6,15 @@
   "private": true,
   "license": "UNLICENSED",
   "prisma": {
-    "seed": "esno ./prisma/seed.ts"
+    "seed": "esno ./prisma/seed.ts",
+    "schema": "./src/prisma/"
   },
   "scripts": {
     "npx:seed": "npx prisma db seed",
     "npx:reset": "npx prisma migrate reset",
     "prisma:migrate": "prisma migrate dev",
     "prisma:generate": "prisma generate",
+    "prisma:studio": "prisma studio",
     "prisma": "prisma db push --schema ./prisma/schema.prisma",
     "build": "nest build",
     "db:generator": "typeorm-model-generator -h localhost -d nest_auth -p 3306 -u root -x root -e mysql -o entities --noConfig true --ce pascal --cp camel",
@@ -36,6 +38,7 @@
     "@nestjs/common": "^10.4.13",
     "@nestjs/config": "^3.3.0",
     "@nestjs/core": "^10.4.13",
+    "@nestjs/jwt": "^10.2.0",
     "@nestjs/event-emitter": "^2.1.1",
     "@nestjs/platform-express": "^10.4.13",
     "@nestjs/schedule": "^4.1.1",

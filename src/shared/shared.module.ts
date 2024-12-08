@@ -1,9 +1,10 @@
-import { Global, Module } from '@nestjs/common';
-import { HttpModule } from '@nestjs/axios';
-import { RedisModule } from './redis/redis.module';
-import { ScheduleModule } from '@nestjs/schedule';
-import { EventEmitterModule } from '@nestjs/event-emitter';
-import { ThrottlerModule } from '@nestjs/throttler';
+import {Global, Module} from '@nestjs/common';
+import {HttpModule} from '@nestjs/axios';
+import {RedisModule} from './redis/redis.module';
+import {ScheduleModule} from '@nestjs/schedule';
+import {EventEmitterModule} from '@nestjs/event-emitter';
+import {ThrottlerModule} from '@nestjs/throttler';
+import {PrismaModule} from './prisma/prisma.module';
 
 @Global()
 @Module({
@@ -29,9 +30,11 @@ import { ThrottlerModule } from '@nestjs/throttler';
       verboseMemoryLeak: true,
       ignoreErrors: false,
     }),
+    PrismaModule,
   ],
   controllers: [],
   providers: [],
-  exports: [HttpModule, RedisModule],
+  exports: [HttpModule, RedisModule, PrismaModule],
 })
-export class SharedModule {}
+export class SharedModule {
+}
