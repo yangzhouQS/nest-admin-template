@@ -24,7 +24,7 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
-    "nest-crud-typeorm": "workspace:*",
+    "@fks/crud-typeorm": "workspace:*",
     "@nestjs/mapped-types": "^2.0.6",
     "@nestjs/axios": "^3.1.2",
     "@nestjs/cache-manager": "^2.3.0",

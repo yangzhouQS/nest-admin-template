@@ -1,11 +1,12 @@
 {
-  "name": "crud-typeorm",
+  "name": "@fks/crud-typeorm",
   "version": "1.0.0",
-  "type": "module",
+  "type": "commonjs",
   "typings": "dist/index.d.ts",
   "module": "src/index.ts",
   "scripts": {
-    "build": "npx tsc -b"
+    "build": "npx tsc -b",
+    "build:esno": "esno src/index.ts --out-dir dist"
   },
   "dependencies": {
     "@nestjs/common": "^10.4.11",
@@ -27,6 +28,7 @@
     "@zmotivat0r/o0": "^1.0.2"
   },
   "devDependencies": {
+    "esno": "^4.8.0",
     "@nestjs/mapped-types": "^2.0.6",
     "@types/node": "22.10.1",
     "@types/qs": "6.9.17",
