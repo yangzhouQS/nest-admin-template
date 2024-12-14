@@ -6,7 +6,7 @@ import {
 import { PrismaClient } from "@prisma/client";
 
 /**
- * 验证已经存在
+ * 验证已经存在, 验证失败返回false, 验证成功返回true
  * @param {string} table
  * @param {ValidationOptions} validationOptions
  * @return {(object: Record<string, any>, propertyName: string) => void}

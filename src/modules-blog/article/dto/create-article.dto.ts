@@ -9,4 +9,7 @@ export class CreateArticleDto {
   content: string;
 
   thumb: string;
+
+  @IsNotEmpty({ message: "请选择栏目id" })
+  categoryId: number;
 }
