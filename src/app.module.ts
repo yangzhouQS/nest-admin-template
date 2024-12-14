@@ -5,18 +5,25 @@ import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
 import { SharedModule } from "./shared/shared.module";
 import { SystemModule } from "./modules/system/system.module";
+
 const DBHOST = "127.0.0.1";
 
 import * as entities from "./entities/entity";
 import { WinstonModule } from "nest-winston";
 import winstonLogger from "./common/winston.config";
 import { BlogModule } from "./modules-blog/blog.module";
+import { ConfigModule } from "@nestjs/config";
+import config from "./config";
 
 @Module({
   imports: [
     BlogModule,
     SharedModule,
     SystemModule,
+    ConfigModule.forRoot({
+      isGlobal: true,
+      load: [...config],
+    }),
     TypeOrmModule.forRoot({
       bigNumberStrings: false,
       dateStrings: true,
