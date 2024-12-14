@@ -2,8 +2,8 @@ import {
   registerDecorator,
   ValidationArguments,
   ValidationOptions,
-} from 'class-validator';
-import { PrismaClient } from '@prisma/client';
+} from "class-validator";
+import { PrismaClient } from "@prisma/client";
 
 /**
  * 验证已经存在
@@ -18,7 +18,7 @@ export function IsExistsRule(
 ) {
   return function (object: Record<string, any>, propertyName: string) {
     registerDecorator({
-      name: 'isExistsRule',
+      name: "IsExistsRule",
       target: object.constructor,
       propertyName: propertyName,
       constraints: [table],

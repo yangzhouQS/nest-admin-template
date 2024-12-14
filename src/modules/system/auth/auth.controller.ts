@@ -12,6 +12,7 @@ import { CreateAuthDto } from "./dto/create-auth.dto";
 import { UpdateAuthDto } from "./dto/update-auth.dto";
 import { ApiOperation, ApiTags } from "@nestjs/swagger";
 import { RegisterDto } from "./dto/register.dto";
+import { LoginDto } from "./dto/login.dto";
 
 @ApiTags("system:auth 用户注册管理模块")
 @Controller("auth")
@@ -22,6 +23,11 @@ export class AuthController {
   @Post("/register")
   register(@Body() body: RegisterDto) {
     return this.authService.register(body);
+  }
+  @ApiOperation({ summary: "用户登录" })
+  @Post("/login")
+  login(@Body() body: LoginDto) {
+    return this.authService.login(body);
   }
 
   @Post()

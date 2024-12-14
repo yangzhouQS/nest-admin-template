@@ -5,6 +5,7 @@ import { NestExpressApplication } from "@nestjs/platform-express";
 import { ValidationPipe } from "@nestjs/common";
 import { WINSTON_MODULE_NEST_PROVIDER } from "nest-winston";
 import Validate from "./common/validate";
+import { TransformInterceptor } from "./common/transform.inteceptor";
 
 BigInt.prototype["toJSON"] = function () {
   const int = Number.parseInt(this.toString());
@@ -30,6 +31,7 @@ async function bootstrap() {
     }),
   );
 
+  app.useGlobalInterceptors(new TransformInterceptor());
   app.useGlobalPipes(new Validate());
 
   setupSwagger(app);

@@ -16,7 +16,7 @@ datasource db {
 
 model user {
   id        BigInt   @id @default(autoincrement()) @db.UnsignedBigInt
-  name      String   @db.VarChar(255)
+  name      String   @unique
   password  String   @db.VarChar(255)
   email     String?  @db.VarChar(128) @default("")
   avatar    String?

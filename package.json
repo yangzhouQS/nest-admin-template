@@ -6,7 +6,7 @@
   "private": true,
   "license": "UNLICENSED",
   "prisma": {
-    "seed": "esno ./prisma/seed.ts"
+    "seedxsxs": "esno ./prisma/seed.ts"
   },
   "scripts": {
     "pnpm:installl": "pnpm install",
