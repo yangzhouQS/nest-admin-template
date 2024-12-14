@@ -6,8 +6,6 @@
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../node_modules/.prisma/client"
-  // previewFeatures = ["prismaSchemaFolder"]
 }
 
 datasource db {
@@ -19,8 +17,8 @@ datasource db {
 model user {
   id        BigInt   @id @default(autoincrement()) @db.UnsignedBigInt
   name      String   @db.VarChar(255)
-  email     String   @db.VarChar(128)
   password  String   @db.VarChar(255)
+  email     String?  @db.VarChar(128) @default("")
   avatar    String?
   github    String?
   douyin    String?

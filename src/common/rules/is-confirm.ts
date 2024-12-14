@@ -2,12 +2,12 @@ import {
   registerDecorator,
   ValidationArguments,
   ValidationOptions,
-} from 'class-validator';
+} from "class-validator";
 
-export function isConfirm(validationOptions?: ValidationOptions) {
+export function IsConfirm(validationOptions?: ValidationOptions) {
   return function (object: Record<string, any>, propertyName: string) {
     registerDecorator({
-      name: 'isConfirm',
+      name: "IsConfirm",
       target: object.constructor,
       propertyName: propertyName,
       constraints: [],
@@ -18,8 +18,8 @@ export function isConfirm(validationOptions?: ValidationOptions) {
           args: ValidationArguments,
         ): Promise<boolean> {
           // console.log('value = ', value);
-          // console.log(args);
-          return Boolean(value === args.object[`${args.property}Confirm`]);
+          // console.log(value, args);
+          return Boolean(value === args.object[`${args.property}`]);
         },
       },
       async: true,

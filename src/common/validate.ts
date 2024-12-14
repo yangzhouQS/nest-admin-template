@@ -1,6 +1,6 @@
-import { HttpException, HttpStatus, ValidationPipe } from '@nestjs/common';
-import { ValidationError } from 'class-validator';
-import { map } from 'lodash';
+import { HttpException, HttpStatus, ValidationPipe } from "@nestjs/common";
+import { ValidationError } from "class-validator";
+import { map } from "lodash";
 
 export default class Validate extends ValidationPipe {
   /*constructor() {
@@ -25,6 +25,12 @@ export default class Validate extends ValidationPipe {
         message: Object.values(error.constraints), // error.constraints[Object.keys(error.constraints)[0]],
       };
     });
-    throw new HttpException(errorMessage, HttpStatus.BAD_REQUEST);
+    throw new HttpException(
+      {
+        code: 422,
+        message: errorMessage,
+      },
+      HttpStatus.UNPROCESSABLE_ENTITY,
+    );
   }
 }

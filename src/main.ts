@@ -1,9 +1,15 @@
-import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
-import { setupSwagger } from './shared/setup-swagger';
-import { NestExpressApplication } from '@nestjs/platform-express';
-import { ValidationPipe } from '@nestjs/common';
-import { WINSTON_MODULE_NEST_PROVIDER } from 'nest-winston';
+import { NestFactory } from "@nestjs/core";
+import { AppModule } from "./app.module";
+import { setupSwagger } from "./shared/setup-swagger";
+import { NestExpressApplication } from "@nestjs/platform-express";
+import { ValidationPipe } from "@nestjs/common";
+import { WINSTON_MODULE_NEST_PROVIDER } from "nest-winston";
+import Validate from "./common/validate";
+
+BigInt.prototype["toJSON"] = function () {
+  const int = Number.parseInt(this.toString());
+  return int ?? this.toString();
+};
 
 const port = 7100;
 async function bootstrap() {
@@ -24,8 +30,10 @@ async function bootstrap() {
     }),
   );
 
+  app.useGlobalPipes(new Validate());
+
   setupSwagger(app);
-  await app.listen(port, '0.0.0.0', async () => {
+  await app.listen(port, "0.0.0.0", async () => {
     const url = await app.getUrl();
     console.log(url);
     console.log(`${url}/api-doc`);

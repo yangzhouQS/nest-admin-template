@@ -6,10 +6,10 @@
   "private": true,
   "license": "UNLICENSED",
   "prisma": {
-    "seed": "esno ./prisma/seed.ts",
-    "schema": "./src/prisma/"
+    "seed": "esno ./prisma/seed.ts"
   },
   "scripts": {
+    "pnpm:installl": "pnpm install",
     "npx:seed": "npx prisma db seed",
     "npx:reset": "npx prisma migrate reset",
     "prisma:migrate": "prisma migrate dev",
@@ -31,7 +31,7 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
-    "@fks/crud-typeorm": "workspace:*",
+    "@fks/crud-typeorm": "file:./packages/crud-typeorm",
     "@nestjs/mapped-types": "^2.0.6",
     "@nestjs/axios": "^3.1.3",
     "@nestjs/cache-manager": "^2.3.0",
