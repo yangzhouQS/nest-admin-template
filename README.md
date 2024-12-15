@@ -183,3 +183,19 @@ yarn add @nestjs/swagger swagger-ui-express
 
 
 ```
+
+
+## 用户认证
+```shell
+pnpm add -w @nestjs/passport passport @nestjs/jwt passport-jwt  passport-local 
+```
+
+> 类型文件安装
+``shell
+pnpm add -w -D @types/passport-local @types/passport-jwt @types/passport
+``
+
+验证参考资料
+https://www.cnblogs.com/jaycethanks/p/16955257.html
+
+
