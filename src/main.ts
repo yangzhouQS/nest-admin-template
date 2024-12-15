@@ -16,6 +16,8 @@ const port = 7100;
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {});
 
+  app.useStaticAssets("./uploads", { prefix: "/uploads" });
+
   // 替换日志器
   // app.useLogger(app.get(WINSTON_MODULE_NEST_PROVIDER));
 
