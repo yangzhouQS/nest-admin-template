@@ -177,3 +177,9 @@ yarn add @nestjs/swagger swagger-ui-express
 | addOAuth2(options: AddOAuth2Options, name: string)         | 添加 OAuth2 认证配置。       |
 
 
+
+## 文件上传
+```shell
+
+
+```

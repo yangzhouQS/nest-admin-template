@@ -6,6 +6,7 @@ import {EventEmitterModule} from '@nestjs/event-emitter';
 import {ThrottlerModule} from '@nestjs/throttler';
 import {PrismaModule} from './prisma/prisma.module';
 import {PrismaService} from "./prisma/prisma.service";
+import { UploadModule } from './upload/upload.module';
 
 @Global()
 @Module({
@@ -32,6 +33,7 @@ import {PrismaService} from "./prisma/prisma.service";
       ignoreErrors: false,
     }),
     PrismaModule,
+    UploadModule,
   ],
   controllers: [],
   providers: [PrismaService],
