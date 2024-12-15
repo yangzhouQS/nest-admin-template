@@ -15,6 +15,7 @@ import { CreateUploadDto } from "./dto/create-upload.dto";
 import { UpdateUploadDto } from "./dto/update-upload.dto";
 import { ApiOperation, ApiTags } from "@nestjs/swagger";
 import { FileInterceptor } from "@nestjs/platform-express";
+import { UploadDecorator } from "../../common/decorators/upload.decorator";
 
 @ApiTags("system:文件上传 Upload  Controller")
 @Controller("upload")
@@ -53,9 +54,11 @@ export class UploadController {
     return file;
   }
 
-  @Get()
-  findAll() {
-    return this.uploadService.findAll();
+  @ApiOperation({ summary: "使用装饰器上传文件" })
+  @UploadDecorator()
+  @Post("upload-image")
+  uploadImage(@UploadedFile() file: Express.Multer.File) {
+    return file;
   }
 
   @Get(":id")
